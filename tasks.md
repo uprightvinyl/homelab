@@ -8,12 +8,12 @@ Setup the Raspberry Pi (piey) as the core foundation for the environment. This r
 
 Get the two beefy machines, ex-gaming kerbside found PC (kerby) and the existing homelab compute (nucky), installed with Proxmox and tuned via Ansible. Provides two hypervisor nodes connected to the NAS (nasy) for shared storage, managed as code.
 
-### Phase 2a - Kerby build
+### Phase 2a — Kerby build
 - [ ] Build Proxmox install media and answer file
 - [ ] Install Proxmox
 - [ ] Relocate node to homelab
 
-### Phase 2b - Nucky build
+### Phase 2b — Nucky build
 - [ ] Create answer file (reuse install media from Phase 2a)
 - [ ] Install Proxmox
 
