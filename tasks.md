@@ -1,8 +1,30 @@
 # uprightlab — Tasks
 
+## Phase 0 — Preparation
+
+This phase prepares the MacBook so it is able to complete the rest of the phases.
+
+- [x] Clone Git repository to MacBook
+- [x] Generate workstation key for SSH usage and update code with public key.
+- [ ] Install pre-requisites tools using brew and brewfile (Ansible, rpi-imager etc)
+
 ## Phase 1 — Foundation
 
-Setup the Raspberry Pi (piey) as the core foundation for the environment. This runs DNS, DHCP and Semaphore. Piey ensures every other host gets a predictable hostname and IP, and a consistent configuration using gitops.
+Setup foundational infrastructure including the core switch and Raspberry Pi (piey). Piey runs DNS and DHCP for the lab. Piey ensures every other host gets a predictable hostname and IP.
+
+### Phase 1a — Switch bootstrap
+- [ ] Configure management VLAN 10
+- [ ] Configure uplink to Eero (VLAN 4)
+- [ ] Configure 1 x access port for piey, using VLAN 10.
+
+### Phase 1b — Pi bootstrap
+- [ ] Flash SD card with Raspberry Pi OS and add cloud init files
+- [ ] Build piey using SD card, confirm network availability
+- [ ] Connect to piey from workstation and run Ansible playbook to deploy & configure Docker and Pi Hole
+- [ ] Add lab host static DNS records to Pi Hole via Ansible.
+
+### Phase 1c — Switch config completion
+- [ ] use Ansible playbook to complete configuration of switch (additional VLANs, trunk ports, inter VLAN routing etc)
 
 ## Phase 2 — Compute
 
@@ -23,4 +45,4 @@ Preparing for Kubernetes, use the spare XPS laptop (lappy) to run as a bare meta
 
 ## Phase 4 — Kubernetes workloads
 
-Provision worker node pools on kerby and nucky via CAPI. Aim to have a functioning multi-node cluster ready for workloads, including GPU-enabled workers on kerby.
+Provision worker node pools on kerby and nucky via CAPI. Aim to have a functioning multi-node cluster ready for workloads, including GPU-enabled workers on kerby. Deploy AWX.

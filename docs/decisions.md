@@ -17,6 +17,11 @@ Whilst AI tools are used to assist in building and operating this lab, they are 
   outages, keeping the control plane available while other nodes
   lose power
 
+## Docker Compose used for services on piey
+
+- piey will run lightweight insfrastructure services, such as pihole. These will run as Docker containers, allowing the container focus of the environment to be maintained, even on this small node that is not part of a k8s cluster.
+- The configuration for docker containers running on piey will use Docker Compose, and the compose files will be stored in GitHub.
+
 ## Security
 
 ### Storing of hashed creds and public keys in GitHub
