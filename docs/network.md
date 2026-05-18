@@ -19,3 +19,23 @@
 | kerby | 10 | `10.0.10.0/24` | `10.0.10.12` |
 | lappy | 20 | `10.0.20.0/24` | `10.0.20.10` |
 | nasy | 4 | `192.168.4.0/22` | TBD |
+
+## DNS
+
+The lab uses a dedicated sub-domain of `lab.uprightlab.com`. This avoids the usage of .local which is discouraged due to potential mDNS clashes. Using a proper TLD allows the use of certs issued by Lets Encrypt.
+
+DNS in the lab is handled by piey. 
+
+## DHCP
+
+DHCP in the lab is handled by piey. Range TBC. 
+
+DHCP in the home network is handled by the Eero devices.
+
+## Internet Access
+
+Internet access for the lab routes via the Cisco switch, Eero and 5g modem. 
+
+## Firewalling
+
+Firewalling between VLANs, the lab and home devices is not in place for simplicity. At present there is no requirement to segregate the two networks.
