@@ -13,9 +13,10 @@ See README.md for full project context and documentation.
 
 ## Conventions
 - British English throughout — spelling, terminology and comments
-- Hostnames follow the pattern: name.uprightlab.local
+- Hostnames follow the pattern: name.lab.uprightlab.com
 - All infrastructure is managed as code from this repository
 
 ## Secrets
-- Never commit secrets, passwords or keys to the repository
-- Secrets are managed with SOPS — see docs/decisions.md
+- Never commit plaintext secrets or private keys to the repository
+- Passwords are stored as hashes — see docs/decisions.md
+- Public keys may be committed — see docs/decisions.md

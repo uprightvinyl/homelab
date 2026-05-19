@@ -1,4 +1,4 @@
-# uprightlab - Design Decisions
+# uprightlab — Design Decisions
 
 ## Philosophy
 
@@ -10,17 +10,17 @@ Whilst AI tools are used to assist in building and operating this lab, they are 
 
 ## Infrastructure
 
-### lappy as dedicated bare metal Kubernetes control plane
+### meta as dedicated bare metal Kubernetes control plane
 - The Dell XPS 13 9350 runs the Kubernetes control plane on bare metal,
   outside of Proxmox, keeping it independent of the hypervisor layer
 - Its built-in battery provides UPS-like resilience during power
   outages, keeping the control plane available while other nodes
   lose power
 
-## Docker Compose used for services on piey
+### Docker Compose used for services on waddle
 
-- piey will run lightweight insfrastructure services, such as pihole. These will run as Docker containers, allowing the container focus of the environment to be maintained, even on this small node that is not part of a k8s cluster.
-- The configuration for docker containers running on piey will use Docker Compose, and the compose files will be stored in GitHub.
+- waddle will run lightweight infrastructure services, such as Pi-hole. These will run as Docker containers, allowing the container focus of the environment to be maintained, even on this small node that is not part of a k8s cluster.
+- The configuration for Docker containers running on waddle will use Docker Compose, and the Compose files will be stored in GitHub.
 
 ## Security
 
@@ -34,5 +34,5 @@ Both decisions weigh simplicity over complete security, without introducing a si
 
 ### Personal and Service Keys
 
-A key is used for my personal Mac to access the environment. A separate "service" key is used on the Raspberry Pi machine for secure authentication between infrastructure nodes. If my machine is compromised or the key lost, avoiding reuse of that key for the services in my lab means the key only needs to be replaced on my personal device. 
+A key is used for my personal Mac to access the environment. A separate "service" key is used on waddle for secure authentication between infrastructure nodes. If my machine is compromised or the key lost, avoiding reuse of that key for the services in my lab means the key only needs to be replaced on my personal device. 
 
