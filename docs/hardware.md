@@ -1,13 +1,12 @@
 # uprightlab — Hardware Inventory
 
-### waddle — Raspberry Pi 3B+
+### waddle — Raspberry Pi 5
 - Hostname: waddle.lab.uprightlab.com
 - Role: DNS, DHCP
-- CPU: 1.4GHz quad-core ARM Cortex-A53
-- RAM: 1GB SDRAM
+- CPU: 2.4GHz quad-core Arm Cortex-A76
+- RAM: 8GB LPDDR4X
 - Storage: 32GB SD card
-- Network: Gigabit Ethernet (over USB 2.0), dual-band Wi-Fi
-- Note: 1GB RAM constrains what can run here
+- Network: Gigabit Ethernet
 
 ### dede — Intel NUC 11 Pro (NUC11TNHi5)
 - Hostname: dede.lab.uprightlab.com

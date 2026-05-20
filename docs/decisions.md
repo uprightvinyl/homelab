@@ -27,6 +27,12 @@ Whilst AI tools are used to assist in building and operating this lab, they are 
 - waddle will run lightweight infrastructure services, such as Pi-hole. These will run as Docker containers, allowing the container focus of the environment to be maintained, even on this small node that is not part of a k8s cluster.
 - The configuration for Docker containers running on waddle will use Docker Compose, and the Compose files will be stored in GitHub.
 
+### Ansible Gitops Workflow using Semaphore running on waddle
+
+- waddle running on a Raspberry Pi 5 provides sufficient resources to run Semaphore alongside DNS and DHCP services.
+- Semaphore will be deployed using Docker Compose, and then will be used to configure all other nodes in the lab via Ansible playbooks stored in GitHub.
+- The initial bootstrap configuration of waddle will be carried out using an Ansible playbook run from the Macbook workstation.
+
 ## Security
 
 ### Storing of hashed creds and public keys in GitHub

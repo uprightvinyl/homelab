@@ -23,11 +23,13 @@ More info on the exact steps can be found here: [network/bandee/setup.md](networ
 ### Stage 1b — Pi bootstrap
 - [ ] Flash SD card with Raspberry Pi OS and add cloud init files
 - [ ] Build waddle using SD card, confirm network availability
-- [ ] Connect to waddle from workstation and run Ansible playbook to deploy & configure Docker and Pi-hole
-- [ ] Add lab host static DNS records to Pi-hole via Ansible.
+- [ ] Connect to waddle from workstation and run Ansible playbook to deploy Docker
+- [ ] Deploy Pi-hole and Semaphore via Docker Compose using Ansible
+- [ ] Configure Semaphore — connect to GitHub repo and add service key
+- [ ] Add lab host static DNS records to Pi-hole via Ansible
 
 ### Stage 1c — Switch config completion
-- [ ] Use Ansible playbook to complete configuration of switch (additional VLANs, trunk ports, inter VLAN routing etc)
+- [ ] Use Ansible playbook to complete configuration of switch (additional VLANs, trunk ports, inter VLAN routing etc).
 
 ## Milestone 2 — Compute
 
