@@ -10,7 +10,12 @@ Whilst AI tools are used to assist in building and operating this lab, they are 
 
 ## Infrastructure
 
+### bandee management interface
+
+- Bandee's management interface lives on the Eero network, so I can access it whilst on the wifi. Bandee's management interface would be unreachable if configured on one of the other lab networks, as the Eero has no knowledge of those and so routes everything outside of its network to the internet.
+
 ### meta as dedicated bare metal Kubernetes control plane
+
 - The Dell XPS 13 9350 runs the Kubernetes control plane on bare metal,
   outside of Proxmox, keeping it independent of the hypervisor layer
 - Its built-in battery provides UPS-like resilience during power
@@ -36,3 +41,6 @@ Both decisions weigh simplicity over complete security, without introducing a si
 
 A key is used for my personal Mac to access the environment. A separate "service" key is used on waddle for secure authentication between infrastructure nodes. If my machine is compromised or the key lost, avoiding reuse of that key for the services in my lab means the key only needs to be replaced on my personal device. 
 
+### Use of RSA keys for bandee
+
+As bandee doesn't support ED25519, RSA keys are used instead. This has to be generated separately. 

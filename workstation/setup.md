@@ -7,3 +7,14 @@ This file documents manual setup steps required on the MacBook workstation that 
     `echo "alias rpi-imager='/Applications/Raspberry\ Pi\ Imager.app/Contents/MacOS/rpi-imager'" >> ~/.zshrc`
 
     `source ~/.zshrc`
+
+- For access to bandee, as it only supports RSA keys, the following needs to be carried out:
+
+    1. Generate an rsa key pair `ssh-keygen -t rsa -b 4096`. Note: Use a passphrase and store it in 1Password.
+    1. Add the following to ~/.ssh/config to allow the older ssh-rsa algorithm, just for bandee.
+
+    ```
+    Host 192.168.4.254
+        HostKeyAlgorithms +ssh-rsa
+        PubkeyAcceptedAlgorithms +ssh-rsa
+    ```

@@ -13,8 +13,11 @@ This milestone prepares the MacBook so it is able to complete the rest of the la
 Setup foundational infrastructure including the core switch and Raspberry Pi (waddle). waddle runs DNS and DHCP for the lab. waddle ensures every other host gets a predictable hostname and IP.
 
 ### Stage 1a — Switch bootstrap
+
+More info on the exact steps can be found here: [network/bandee/setup.md](network/bandee/setup.md)
+
+- [x] Configure management interface and uplink to Eero via UI (VLAN 4).
 - [ ] Configure management VLAN 10
-- [ ] Configure uplink to Eero (VLAN 4)
 - [ ] Configure 1 x access port for waddle, using VLAN 10.
 
 ### Stage 1b — Pi bootstrap
