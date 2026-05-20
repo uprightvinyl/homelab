@@ -1,2 +1,2 @@
 brew "ansible"
-brew "rpi-imager"
+cask "raspberry-pi-imager"

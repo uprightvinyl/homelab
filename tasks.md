@@ -6,7 +6,7 @@ This milestone prepares the MacBook so it is able to complete the rest of the la
 
 - [x] Clone Git repository to MacBook
 - [x] Generate workstation key for SSH usage and update code with public key.
-- [ ] Install pre-requisites tools using brew and brewfile (Ansible, rpi-imager etc)
+- [x] Install pre-requisites tools using brew and brewfile (Ansible, rpi-imager etc)
 
 ## Milestone 1 — Foundation
 
