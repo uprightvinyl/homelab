@@ -17,8 +17,8 @@ Setup foundational infrastructure including the core switch and Raspberry Pi (wa
 More info on the exact steps can be found here: [network/bandee/setup.md](network/bandee/setup.md)
 
 - [x] Configure management interface and uplink to Eero via UI (VLAN 4).
-- [ ] Configure management VLAN 10
-- [ ] Configure 1 x access port for waddle, using VLAN 10.
+- [x] Configure management VLAN 10
+- [x] Configure 1 x access port for waddle, using VLAN 10.
 
 ### Stage 1b — Pi bootstrap
 - [ ] Flash SD card with Raspberry Pi OS and add cloud init files

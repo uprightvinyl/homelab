@@ -28,6 +28,8 @@ This file documents manual steps that need to be carried out prior to using Ansi
 1. Connectivity will be lost. Change the port in use from GE25 to GE26 and plug the other end of the cable into the Eero, connectivity should be reestablished.
 1. Click Save in the top menu bar to commit the config.
 
+Note: Remember to use the Eero app to create an IPv4 reservation for bandee.
+
 ### SSH Access
 
 Now that bandee is running on the correct static IP in the correct VLAN, let's setup SSH access.
@@ -44,3 +46,26 @@ Now that bandee is running on the correct static IP in the correct VLAN, let's s
 1. Click Save in the top menu bar.
 
 With these steps done, you can now SSH to the switch on the correct IP address.
+
+## Manual Configuration via SSH
+
+The following steps will complete the remaining manual configuration of the switch. After this, the remaining switch configuration will be automated via Semaphore running on waddle.
+
+1. SSH to bandee `ssh admin@192.168.4.254`.
+1. Configure hostname, VLAN 10 and an interface for waddle.
+
+    ```
+    configure
+    hostname bandee
+    vlan database
+    vlan 10
+    exit
+    interface gi1
+    switchport mode access
+    switchport access vlan 10
+    exit
+    exit
+    ```
+
+1. Commit the config to run at start, `copy running-config startup-config`.
+    

@@ -20,6 +20,14 @@
 | meta | 20 | `10.0.20.0/24` | `10.0.20.10` |
 | rick | 4 | `192.168.4.0/22` | TBD |
 
+## Switch Ports
+
+| Port | Host | VLAN |
+|------|------|------|
+| gi1  | waddle | 10 |
+| gi26 | Eero uplink | 4 |
+
+
 ## DNS
 
 The lab uses a dedicated sub-domain of `lab.uprightlab.com`. This avoids the usage of .local which is discouraged due to potential mDNS clashes. Using a proper TLD allows the use of certs issued by Let's Encrypt.
