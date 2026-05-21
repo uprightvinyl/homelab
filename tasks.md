@@ -23,8 +23,8 @@ More info on the exact steps can be found here: [network/bandee/setup.md](networ
 - [x] Configure inter-vlan routing
 
 ### Stage 1b — Pi bootstrap
-- [ ] Flash SD card with Raspberry Pi OS and add cloud init files
-- [ ] Build waddle using SD card, confirm network availability
+- [x] Flash SD card with Raspberry Pi OS and add cloud init files
+- [x] Build waddle using SD card, confirm network availability
 - [ ] Connect to waddle from workstation and run Ansible playbook to deploy Docker
 - [ ] Deploy Pi-hole and Semaphore via Docker Compose using Ansible
 - [ ] Configure Semaphore — connect to GitHub repo and add service key

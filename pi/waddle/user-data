@@ -1,0 +1,21 @@
+#cloud-config
+
+hostname: waddle
+fqdn: waddle.lab.uprightlab.com
+
+users:
+  - name: chris
+    groups: sudo
+    shell: /bin/bash
+    ssh_authorized_keys:
+      - ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAINiVgzG4B9lXj7STL4S+g/l95BXNWpYqkRIP3x1Qa89H chris@uprightvinyl.co.uk
+    sudo: ALL=(ALL) NOPASSWD:ALL
+
+enable_ssh: true
+
+ssh_pwauth: false
+
+package_update: true
+package_upgrade: true
+packages:
+  - python3
