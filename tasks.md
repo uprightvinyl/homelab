@@ -7,6 +7,7 @@ This milestone prepares the MacBook so it is able to complete the rest of the la
 - [x] Clone Git repository to MacBook
 - [x] Generate workstation key for SSH usage and update code with public key.
 - [x] Install pre-requisites tools using brew and brewfile (Ansible, rpi-imager etc)
+- [x] Add static routes to MacBook
 
 ## Milestone 1 — Foundation
 
@@ -19,6 +20,7 @@ More info on the exact steps can be found here: [network/bandee/setup.md](networ
 - [x] Configure management interface and uplink to Eero via UI (VLAN 4).
 - [x] Configure management VLAN 10
 - [x] Configure 1 x access port for waddle, using VLAN 10.
+- [x] Configure inter-vlan routing
 
 ### Stage 1b — Pi bootstrap
 - [ ] Flash SD card with Raspberry Pi OS and add cloud init files

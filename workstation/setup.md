@@ -18,3 +18,11 @@ This file documents manual setup steps required on the MacBook workstation that 
         HostKeyAlgorithms +ssh-rsa
         PubkeyAcceptedAlgorithms +ssh-rsa
     ```
+
+- for access from the Eero network (192.168.4.0/22) during initial setup, we'll need some static routes in place.
+
+    ```
+    sudo route add -net 10.0.10.0/24 192.168.4.254
+    sudo route add -net 10.0.20.0/24 192.168.4.254
+    sudo route add -net 10.0.30.0/24 192.168.4.254
+    ```

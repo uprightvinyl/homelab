@@ -52,7 +52,7 @@ With these steps done, you can now SSH to the switch on the correct IP address.
 The following steps will complete the remaining manual configuration of the switch. After this, the remaining switch configuration will be automated via Semaphore running on waddle.
 
 1. SSH to bandee `ssh admin@192.168.4.254`.
-1. Configure hostname, VLAN 10 and an interface for waddle.
+1. Configure hostname, VLAN 10, initial routing and an interface for waddle.
 
     ```
     configure
@@ -60,6 +60,11 @@ The following steps will complete the remaining manual configuration of the swit
     vlan database
     vlan 10
     exit
+    interface vlan 10
+    ip address 10.0.10.1 255.255.255.0
+    exit
+    ip routing
+    ip route 0.0.0.0 0.0.0.0 192.168.4.1
     interface gi1
     switchport mode access
     switchport access vlan 10
