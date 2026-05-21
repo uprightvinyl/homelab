@@ -50,3 +50,9 @@ A key is used for my personal Mac to access the environment. A separate "service
 ### Use of RSA keys for bandee
 
 As bandee doesn't support ED25519, RSA keys are used instead. This has to be generated separately. 
+
+## OS Choice
+
+### Meta - Ubuntu Server 24.04 LTS
+
+- Meta will run Ubuntu Server 24.04 LTS. This aligns with what NKP uses and makes initial setup easier than dealing with Talos. A future switch to Talos may be considered, but not at this initial phase of the lab rebuild.

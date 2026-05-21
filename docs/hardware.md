@@ -5,7 +5,7 @@
 - Role: DNS, DHCP
 - CPU: 2.4GHz quad-core Arm Cortex-A76
 - RAM: 8GB LPDDR4X
-- Storage: 32GB SD card
+- Storage: 32GB Sandisk Extreme Plus microSDHC card (A1, V30, U3)
 - Network: Gigabit Ethernet
 
 ### dede — Intel NUC 11 Pro (NUC11TNHi5)
@@ -39,6 +39,7 @@
 - CPU: Intel Core i7-6560U @ 2.20GHz (2 Cores, 4 Threads)
 - RAM: 16GB DDR3L
 - Storage: 512GB SSD
+- Network: TP-Link USB 3.0 to RJ45 Gigabit Ethernet Adapter (Model: UE306, Chipset: ASIX AX88179)
 
 ### bandee — Cisco SG350-28
 - Hostname: bandee.lab.uprightlab.com
