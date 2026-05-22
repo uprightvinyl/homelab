@@ -32,6 +32,12 @@ Whilst AI tools are used to assist in building and operating this lab, they are 
 - waddle running on a Raspberry Pi 5 provides sufficient resources to run Semaphore alongside DNS and DHCP services.
 - Semaphore will be deployed using Docker Compose, and then will be used to configure all other nodes in the lab via Ansible playbooks stored in GitHub.
 - The initial bootstrap configuration of waddle will be carried out using an Ansible playbook run from the Macbook workstation.
+- waddle will use SQLite for the Semaphore database, its embedded so keeps things simple by avoiding another container for MYSQL or PostgreSQL.
+
+### DNS
+
+- waddle will host an authoritative DNS server for the lab.
+- upstream DNS will be provided using Cloudflare (1.1.1.1), initially this will not use a tunnel for DNS-over-HTTPS from waddle. This is for simplicity as there is no real need to encrypt DNS requests at this stage. This decision may be reviewed in the future, more out of curiosity than necessity. 
 
 ## Security
 
