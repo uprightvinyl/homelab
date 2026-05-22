@@ -20,3 +20,9 @@ See README.md for full project context and documentation.
 - Never commit plaintext secrets or private keys to the repository
 - Passwords are stored as hashes — see docs/decisions.md
 - Public keys may be committed — see docs/decisions.md
+
+
+## References
+- Consider the following references when providing responses related to the relevant content from each site
+    - https://docs.ansible.com/projects/ansible/latest/tips_tricks/sample_setup.html
+    - https://semaphoreui.com/docs/admin-guide/installation/docker
