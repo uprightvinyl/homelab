@@ -10,3 +10,6 @@ network:
       routes:
         - to: default
           via: 10.0.10.1
+  wifis:
+    wlan0:
+      regulatory-domain: "AU"
