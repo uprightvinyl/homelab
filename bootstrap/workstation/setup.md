@@ -26,3 +26,7 @@ This file documents manual setup steps required on the MacBook workstation that 
     sudo route add -net 10.0.20.0/24 192.168.4.254
     sudo route add -net 10.0.30.0/24 192.168.4.254
     ```
+
+- Create Ansible vault file containing variables from the Docker Compose file at [../../docker/waddle/docker-compose.yaml}(../../docker/waddle/docker-compose.yaml).
+
+- Run `ansible-galaxy collection install -r requirements.yaml` prior to running the playbook for waddle

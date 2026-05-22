@@ -36,11 +36,14 @@ services:
       - "3000:3000"
     environment:
       SEMAPHORE_DB_DIALECT: sqlite
-      SEMAPHORE_DB: '/etc/semaphore/semaphore.sqlite'
-      SEMAPHORE_ADMIN: ${SEMAPHORE_USER}
+      SEMAPHORE_DB: '/var/lib/semaphore/database.sqlite'
       SEMAPHORE_ADMIN_PASSWORD: ${SEMAPHORE_PASSWORD}
+      SEMAPHORE_ADMIN_NAME: ${SEMAPHORE_USER}
       SEMAPHORE_ADMIN_EMAIL: ${SEMAPHORE_EMAIL}
+      SEMAPHORE_ADMIN: ${SEMAPHORE_USER}
     volumes:
-      - './semaphore:/etc/semaphore'
+      - semaphore_data:/var/lib/semaphore
     depends_on:
       - pihole
+volumes:
+  semaphore_data:

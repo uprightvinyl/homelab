@@ -43,11 +43,17 @@ Whilst AI tools are used to assist in building and operating this lab, they are 
 
 ### Storing of hashed creds and public keys in GitHub
 
-The proxmox `answer.toml` has a hashed password included. This has been included for simplicity, rather than injecting the password later or excluding the file entirely. Proxmox doesn't support passwordless config, the install will fail without a password. The password is of significant complexity that it is not simple to hack, and is unique to each host, limiting the blast radius. And this just for my homelab, which is not a critical environment.
+The proxmox `answer.toml` has a hashed password included. This has been included for simplicity, rather than injecting the password later or excluding the file entirely. Proxmox doesn't support passwordless config, the install will fail without a password. The password is of significant complexity that it is not simple to hack, and is unique to each host, limiting the blast radius. And this is just for a homelab, which is not a critical environment.
 
 The file also includes public keys. These are again included for simplicity, avoiding an extra step to add these or injecting them as part of the build process. The public key is designed to be public, it is useless without the private key. Again, in a more secure or production environment, omitting these keys would be preferred, but this is for my homelab. 
 
 Both decisions weigh simplicity over complete security, without introducing a significant security risk.
+
+Its also worth noting that both these secrets are useless without local access to the lab.
+
+### Use of Ansible Vault
+
+Instead of keeping the environment variables used for Docker Compose in plain text inside a .env file, Ansible Vault will be used to encrypt variables for use with Ansible and Compose. Vault files will be excluded from GitHub as they could be brute forced and may include information that would be used from outside the lab (such as Cloudflare secrets).
 
 ### Personal and Service Keys
 

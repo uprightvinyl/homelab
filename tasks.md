@@ -25,8 +25,8 @@ More info on the exact steps can be found here: [network/bandee/setup.md](networ
 ### Stage 1b — Pi bootstrap
 - [x] Flash SD card with Raspberry Pi OS and add cloud init files
 - [x] Build waddle using SD card, confirm network availability
-- [ ] Connect to waddle from workstation and run Ansible playbook to deploy Docker
-- [ ] Deploy Pi-hole and Semaphore via Docker Compose using Ansible
+- [x] Write Docker Compose file for waddle
+- [x] Run playbook from workstation to deploy Docker, Pi-hole and Semaphore via Docker Compose using Ansible
 - [ ] Configure Semaphore — connect to GitHub repo and add service key
 - [ ] Add lab host static DNS records to Pi-hole via Ansible
 

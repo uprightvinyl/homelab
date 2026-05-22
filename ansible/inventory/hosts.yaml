@@ -1,0 +1,6 @@
+all:
+  children:
+    lab:
+      hosts:
+        waddle:
+          ansible_host: 10.0.10.10

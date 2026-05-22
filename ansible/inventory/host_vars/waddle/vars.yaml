@@ -1,0 +1,5 @@
+pihole_password: "{{ vault_pihole_password }}"
+cloudflare_tunnel_token: "{{ vault_cloudflare_tunnel_token }}"
+semaphore_password: "{{ vault_semaphore_password }}"
+semaphore_email: "{{ vault_semaphore_email }}"
+semaphore_user: "{{ vault_semaphore_user }}"
