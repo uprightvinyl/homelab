@@ -41,6 +41,8 @@ Whilst AI tools are used to assist in building and operating this lab, they are 
 
 ## Security
 
+The general rule of storing encrypted creds in GitHub has come down to whether they could be used to access my homelab remotely, and therefore possibly my home network as well. If its just a cred that is used along for something with the lab, such as a local password, then I'm comfortable storing it encrypted in GitHub. If it is something that can be used externally, it stays out of GitHub and is stored in 1Password.
+
 ### Storing of hashed creds and public keys in GitHub
 
 The proxmox `answer.toml` has a hashed password included. This has been included for simplicity, rather than injecting the password later or excluding the file entirely. Proxmox doesn't support passwordless config, the install will fail without a password. The password is of significant complexity that it is not simple to hack, and is unique to each host, limiting the blast radius. And this is just for a homelab, which is not a critical environment.

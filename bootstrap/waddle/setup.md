@@ -27,3 +27,12 @@
     https://downloads.raspberrypi.com/raspios_lite_arm64/images/raspios_lite_arm64-2026-04-21/2026-04-21-raspios-trixie-arm64-lite.img.xz \
     /dev/disk4
     ```
+
+## Temporary Internet Access
+
+waddle won't have access to the internet, as the Eero has no return route to the lab. Before a NAT device is setup, enable wifi on the waddle so it has access to the internet.
+
+1. Check if the wifi interface is soft blocked using `rfkill list`
+1. If it is, run `sudo raspi-config nonint do_wifi_country AU`.
+1. Then run `sudo nmcli dev wifi connect "YourEeroSSID" password "YourWifiPassword"`
+1. Then check routes, and delete and recreate the wifi route with a lower metric than the ethernet route.

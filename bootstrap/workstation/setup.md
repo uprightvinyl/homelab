@@ -19,12 +19,10 @@ This file documents manual setup steps required on the MacBook workstation that 
         PubkeyAcceptedAlgorithms +ssh-rsa
     ```
 
-- for access from the Eero network (192.168.4.0/22) during initial setup, we'll need some static routes in place.
+- for access from the Eero network (192.168.4.0/22) during initial setup, we'll need a static route in place for waddle. Note, when Cloudflare is used, this route will automatically get overwritten.
 
     ```
     sudo route add -net 10.0.10.0/24 192.168.4.254
-    sudo route add -net 10.0.20.0/24 192.168.4.254
-    sudo route add -net 10.0.30.0/24 192.168.4.254
     ```
 
 - Create Ansible vault file containing variables from the Docker Compose file at [../../docker/waddle/docker-compose.yaml}(../../docker/waddle/docker-compose.yaml).
