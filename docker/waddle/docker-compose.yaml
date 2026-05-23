@@ -16,6 +16,13 @@ services:
       FTLCONF_dns_listeningMode: 'ALL'
       FTLCONF_dns_upstreams: '1.1.1.1;1.0.0.1'
       FTLCONF_dns_domain_name: 'lab.uprightlab.com'
+      FTLCONF_misc_dnsmasq_lines: >-
+        address=/waddle.lab.uprightlab.com/10.0.10.10;
+        address=/dede.lab.uprightlab.com/10.0.10.11;
+        address=/kirby.lab.uprightlab.com/10.0.10.12;
+        address=/meta.lab.uprightlab.com/10.0.20.10;
+        address=/bandee.lab.uprightlab.com/192.168.4.254;
+        address=/rick.lab.uprightlab.com/192.168.4.10
     volumes:
       - './etc-pihole:/etc/pihole'
   cloudflared:
