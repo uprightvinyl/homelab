@@ -1,5 +1,6 @@
 pihole_password: "{{ vault_pihole_password }}"
-cloudflare_tunnel_token: "{{ vault_cloudflare_tunnel_token }}"
+cloudflare_tunnel_token: "{{ vault_cloudflare_tunnel_token | default(lookup('env', 'CLOUDFLARE_TUNNEL_TOKEN')) }}"
 semaphore_password: "{{ vault_semaphore_password }}"
 semaphore_email: "{{ vault_semaphore_email }}"
 semaphore_user: "{{ vault_semaphore_user }}"
+semaphore_service_key: "{{ vault_semaphore_service_key }}"

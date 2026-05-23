@@ -3,6 +3,27 @@
   hosts: waddle
   become: true
   tasks:
+    - name: Create semaphore user
+      user:
+        name: semaphore
+        groups: sudo
+        shell: /bin/bash
+        append: true
+
+    - name: Configure passwordless sudo for semaphore user
+      lineinfile:
+        path: /etc/sudoers.d/semaphore
+        line: 'semaphore ALL=(ALL) NOPASSWD:ALL'
+        create: true
+        mode: '0440'
+        validate: 'visudo -cf %s'
+
+    - name: Add service key to semaphore user
+      authorized_key:
+        user: semaphore
+        key: "{{ lookup('file', playbook_dir + '/../files/semaphore_service_key.pub') }}"
+        state: present
+
     - name: Install Docker prerequisites
       apt:
         name:
