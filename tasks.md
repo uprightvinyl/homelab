@@ -27,10 +27,12 @@ More info on the exact steps can be found here: [network/bandee/setup.md](networ
 - [x] Build waddle using SD card, confirm network availability
 - [x] Write Docker Compose file for waddle
 - [x] Run playbook from workstation to deploy Docker, Pi-hole and Semaphore via Docker Compose using Ansible
-- [ ] Configure Semaphore — connect to GitHub repo and add service key
-- [ ] Add lab host static DNS records to Pi-hole via Ansible
+- [x] Configure Cloudflare for remote access to waddle and remove static routes from Macbook
 
-### Stage 1c — Switch config completion
+### Stage 1c — Semaphore bootstrap & Initial GitOps
+
+- [x] Configure Semaphore — connect to GitHub repo and add service key
+- [ ] Add lab host static DNS records to Pi-hole via Ansible
 - [ ] Use Ansible playbook to complete configuration of switch (additional VLANs, trunk ports, inter VLAN routing etc).
 
 ## Milestone 2 — Compute
@@ -53,3 +55,8 @@ Preparing for Kubernetes, use the spare XPS laptop (meta) to run as a bare metal
 ## Milestone 4 — Kubernetes workloads
 
 Provision worker node pools on kirby and dede via CAPI. Aim to have a functioning multi-node cluster ready for workloads, including GPU-enabled workers on kirby. Deploy AWX.
+
+## Items to Scheduled
+
+- Deploy OPNSense for hide NAT out to the internet/eero network (Deploy VM with VLAN 4 and 10 attached)
+- Disabled wifi on waddle once OPNSense is in place.

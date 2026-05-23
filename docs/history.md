@@ -2,6 +2,16 @@
 
 ## May 2026
 
+### Saturday 23rd
+
+- Setup remote access using Cloudflare WARP. 
+- Completed initial Semaphore setup, getting the config of waddle to apply via Semaphore from GitHub, rather than manually from my Macbook. Setup auth so that Semaphore uses its own user, rather my user, to make it clear who/what is performing each action.
+
+### Friday 22nd
+
+- First time working with Ansible. Docker Compose file written for waddle to deploy Pi-hole, Cloudflared and Semaphore. Folder structure and playbook written to get Docker and Docker Compose running. Successfully got Pi-Hole and Semaphore available on the network, and Cloudflare Tunnel into a healthy status.
+- Had to enable wifi on waddle to allow it to get internet access. The Eero network has no support for static routes and so has no idea where to route return packets for anything other than its own 192.168.4.0/22 network. Will likely fix this later by deploying OPNsense for outbound NAT.
+
 ### Thursday 21st
 
 - Picked up a few supplies from Scorptec, including a case and power supply for the Pi 5, and 2 x SD card (one spare, one for the DakBoard Pi 3 so the one it was using could go into the Pi 5).

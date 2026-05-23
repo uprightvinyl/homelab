@@ -28,3 +28,10 @@ This file documents manual setup steps required on the MacBook workstation that 
 - Create Ansible vault file containing variables from the Docker Compose file at [../../docker/waddle/docker-compose.yaml}(../../docker/waddle/docker-compose.yaml).
 
 - Run `ansible-galaxy collection install -r requirements.yaml` prior to running the playbook for waddle
+
+- Generate a service key for Semaphore. Don't set a passphrase. Copy the public key to the ansible folder so it can be used when setting up hosts that Semaphore will need access to.
+
+    ```
+    ssh-keygen -t ed25519 -C "semaphore@waddle.lab.uprightlab.com" -f ~/.ssh/semaphore_service_key
+    cp ~/.ssh/semaphore_service_key.pub /ansible/files/semaphore_service_key.pub
+    ```
