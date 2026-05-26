@@ -1,22 +1,30 @@
 ---
 - name: Configure bandee switch
   hosts: bandee
-  gather_facts: false      # network_cli host — no setup module
+  gather_facts: false
   tasks:
-    - name: Create VLANs 20 and 30
+    - name: Read current VLANs
+      community.ciscosmb.command:
+        commands: show vlan
+      register: vlan_state
+      changed_when: false                # a read never changes anything
+
+    - name: Ensure required VLANs exist
       community.ciscosmb.command:
         commands:
           - configure terminal
           - vlan database
-          - vlan 20,30
+          - "vlan {{ item }}"
           - exit
           - end
+      loop:
+        - 20
+        - 30
+      when: vlan_state.stdout[0] is not search('(?m)^\s*' ~ item ~ '\s')
+      changed_when: true                 # only reached when the VLAN was missing
+      notify: Save running config
 
-    - name: Read back the VLAN table
+  handlers:
+    - name: Save running config
       community.ciscosmb.command:
-        commands: show vlan
-      register: vlan_table
-
-    - name: Show the VLAN table
-      ansible.builtin.debug:
-        var: vlan_table.stdout_lines
+        commands: copy running-config startup-config
