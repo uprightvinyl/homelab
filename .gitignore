@@ -1,2 +1,10 @@
+# Environment files and external (out-of-repo) secrets
 **/.env
 **/secrets-external.yaml
+
+# Private keys — defensive, never commit (public .pub keys are unaffected)
+*.pem
+*.key
+*.ppk
+id_rsa
+id_ed25519

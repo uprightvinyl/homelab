@@ -18,7 +18,7 @@
         mode: '0440'
         validate: 'visudo -cf %s'
 
-    - name: Add service key to semaphore user
+    - name: Add semaphore public key to local semaphore user #allows semaphore to connect to host with it's private key
       authorized_key:
         user: semaphore
         key: "{{ lookup('file', playbook_dir + '/../files/semaphore_service_key.pub') }}"

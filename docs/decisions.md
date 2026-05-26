@@ -41,7 +41,7 @@ Whilst AI tools are used to assist in building and operating this lab, they are 
 
 ## Security
 
-The general rule of storing encrypted creds in GitHub has come down to whether they could be used to access my homelab remotely, and therefore possibly my home network as well. If its just a cred that is used along for something with the lab, such as a local password, then I'm comfortable storing it encrypted in GitHub. If it is something that can be used externally, it stays out of GitHub and is stored in 1Password.
+The general rule of storing encrypted creds in GitHub has come down to whether they could be used to access my homelab remotely, and therefore possibly my home network as well. If its just a cred that is used only for something within the lab, such as a local password, then I'm comfortable storing it encrypted in GitHub. If it is something that can be used externally, it stays out of GitHub, is injected when needed, and is stored in 1Password.
 
 ### Storing of hashed creds and public keys in GitHub
 
@@ -55,7 +55,12 @@ Its also worth noting that both these secrets are useless without local access t
 
 ### Use of Ansible Vault
 
-Instead of keeping the environment variables used for Docker Compose in plain text inside a .env file, Ansible Vault will be used to encrypt variables for use with Ansible and Compose. Vault files will be excluded from GitHub as they could be brute forced and may include information that would be used from outside the lab (such as Cloudflare secrets).
+Instead of keeping credentials in plaintext (for example in a Docker Compose `.env` file), Ansible Vault is used to encrypt variables for use with Ansible and Compose.
+
+Vault files are split by how the credential could be used, following the security rule above:
+
+- **`secrets.yaml` — committed (encrypted).** Holds only *in-lab* credentials that are useless without local access to the lab (for example the Pi-hole and Semaphore admin passwords). They are stored AES-256 encrypted in the repo. This is acceptable because they cannot be used to reach the lab or home network from outside, and the vault passphrase is long, high-entropy and held only in 1Password. No private keys or externally-usable secrets are placed in this file.
+- **`secrets-external.yaml` — excluded from the repo.** Holds anything that could be used from *outside* the lab (for example the Cloudflare Tunnel token). It is git-ignored, stored in 1Password, and injected at run time (locally, or via Semaphore's environment).
 
 ### Personal and Service Keys
 
