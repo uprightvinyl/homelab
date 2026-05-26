@@ -1,0 +1,22 @@
+---
+- name: Configure bandee switch
+  hosts: bandee
+  gather_facts: false      # network_cli host — no setup module
+  tasks:
+    - name: Create VLANs 20 and 30
+      community.ciscosmb.command:
+        commands:
+          - configure terminal
+          - vlan database
+          - vlan 20,30
+          - exit
+          - end
+
+    - name: Read back the VLAN table
+      community.ciscosmb.command:
+        commands: show vlan
+      register: vlan_table
+
+    - name: Show the VLAN table
+      ansible.builtin.debug:
+        var: vlan_table.stdout_lines

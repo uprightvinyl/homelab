@@ -29,9 +29,15 @@ This file documents manual setup steps required on the MacBook workstation that 
 
 - Run `ansible-galaxy collection install -r requirements.yaml` prior to running the playbook for waddle
 
-- Generate a service key for Semaphore. Don't set a passphrase. Copy the public key to the ansible folder so it can be used when setting up hosts that Semaphore will need access to.
+- Generate an ed25519 service key for Semaphore. The ed25519 key will be used for all hosts, except for bandee which only supports RSA keys. Don't set a passphrase. Copy the public key to the ansible folder so it can be used when setting up hosts that Semaphore will need access to.
 
     ```
     ssh-keygen -t ed25519 -C "semaphore@waddle.lab.uprightlab.com" -f ~/.ssh/semaphore_service_key
     cp ~/.ssh/semaphore_service_key.pub /ansible/files/semaphore_service_key.pub
+    ```
+
+- Generate an RSA service key for Semaphore. This will be used only for accessing bandee. Don't set a passphrase.
+
+    ```
+    ssh-keygen -t rsa -b 4096 -C "semaphore@bandee.lab.uprightlab.com" -f ~/.ssh/semaphore_rsa_key
     ```
