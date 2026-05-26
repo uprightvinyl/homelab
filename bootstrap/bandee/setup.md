@@ -11,7 +11,7 @@ This file documents manual steps that need to be carried out prior to using Ansi
 1. Connect port GE25 directly to the MacBook.
 1. Configure the MacBook with a static IP address of 192.168.1.10/24.
 1. Connect to the web UI using 192.168.1.254.
-1. Login with the default credentials and create a new **admin** user. Store the creds in 1Password.
+1. Login with the default credentials and create a new **chris** user. Store the creds in 1Password.
 1. Open VLAN Management > VLAN Settings.
 1. Click Add.
 1. Create a new VLAN with ID VLAN 4 and click Apply.
@@ -39,10 +39,12 @@ Now that bandee is running on the correct static IP in the correct VLAN, let's s
 1. Enable **SSH User Authentication by Public Key** and **Automatic Login**.
 1. Under **SSH User Authentication Table (by Public Key)**, click **Add**.
 1. Click Apply
-1. Enter **admin** for the username, select the Key Type as **RSA**, and paste in the RSA public key from the laptop. Remove anything other than the key material e.g. `ssh-rsa` at the beginning and any comments at the end.
+1. Enter **chris** for the username, select the Key Type as **RSA**, and paste in the RSA public key from the laptop. Remove anything other than the key material e.g. `ssh-rsa` at the beginning and any comments at the end.
     Note: You can use `cat ~/.ssh/id_rsa.pub` to get the rsa public key.
+1. Follow the same steps to add a key for semaphore. Note, the key name is semaphore_rsa_key.pub.
 1. Open Security > TCP/UDP Services.
 1. Enable the SSH Service and click Apply.
+1. Add a use for semaphore under Administration > User Accounts. Grant it Level 15 access. Save the password in 1Password.
 1. Click Save in the top menu bar.
 
 With these steps done, you can now SSH to the switch on the correct IP address.

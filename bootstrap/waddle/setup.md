@@ -28,9 +28,12 @@
     /dev/disk4
     ```
 
+
+
+
 ## Temporary Internet Access
 
-waddle won't have access to the internet, as the Eero has no return route to the lab. Before a NAT device is setup, enable wifi on the waddle so it has access to the internet.
+waddle won't have access to the internet, as the Eero has no return route to the lab. Before a NAT device is setup, enable wifi on waddle so it has access to the internet.
 
 1. Check if the wifi interface is soft blocked using `rfkill list`
 1. If it is, run `sudo raspi-config nonint do_wifi_country AU`.
