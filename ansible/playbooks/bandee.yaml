@@ -20,6 +20,7 @@
       loop:
         - 20
         - 30
+        - 40
       when: vlan_state.stdout[0] is not search('(?m)^\s*' ~ item ~ '\s')
       changed_when: true                 # only reached when the VLAN was missing
       notify: Save running config
