@@ -2,6 +2,14 @@
 
 ## May 2026
 
+### Tuesday 26th
+
+- Moved to using Claude Code, still in advisory mode.
+- Scanned repository with gitleaks and updated files such as README.md and LICENSE.
+- Made repository public.
+- Built out components for bandee's build, with a loop built to make the playbook idempotent as bandee has limited facts support.
+- Added bandee's playbook to Semaphore and tiggered first automated gitops loop by adding an additional VLAN to the existing playbook.
+
 ### Saturday 23rd
 
 - Setup remote access using Cloudflare WARP. 
