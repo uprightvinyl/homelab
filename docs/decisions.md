@@ -70,6 +70,21 @@ A key is used for my personal Mac to access the environment. A separate "service
 
 As bandee doesn't support ED25519, RSA keys are used instead. This has to be generated separately. 
 
+### Security Related Convenience Tradeoffs Accepted for the Lab
+
+A few settings consciously favour convenience over hardening, because this is a
+non-critical learning environment on a trusted local network with no
+internet-facing services:
+
+- **`host_key_checking = False`** (`ansible/ansible.cfg`) — Ansible does not
+  verify SSH host keys. This avoids failures when hosts are rebuilt and their
+  keys change, at the cost of host-key verification on the lab LAN. It would be
+  re-enabled in a production or untrusted environment.
+- **Passwordless sudo (`NOPASSWD:ALL`)** for the `chris` and `semaphore` users
+  — lets cloud-init and Semaphore automate configuration without interactive
+  prompts. The blast radius is limited to the lab, and access still requires the
+  relevant SSH private key.
+
 ## OS Choice
 
 ### Meta - Ubuntu Server 24.04 LTS
