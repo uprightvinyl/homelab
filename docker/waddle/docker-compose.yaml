@@ -50,6 +50,7 @@ services:
       SEMAPHORE_ADMIN_NAME: ${SEMAPHORE_USER}
       SEMAPHORE_ADMIN_EMAIL: ${SEMAPHORE_EMAIL}
       SEMAPHORE_ADMIN: ${SEMAPHORE_USER}
+      SEMAPHORE_ACCESS_KEY_ENCRYPTION: ${SEMAPHORE_ACCESS_KEY_ENCRYPTION}
     volumes:
       - semaphore_data:/var/lib/semaphore
     depends_on:

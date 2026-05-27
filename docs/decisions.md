@@ -47,6 +47,10 @@ The facts module, `community.ciscosmb.facts`, is the obvious first choice, but i
 
 `show vlan` is therefore the most direct and authoritative source for "does this VLAN exist", and the lightest: the facts module runs a batch of show commands across every subset, whereas the guard needs just one. The general preference remains structured facts over text parsing wherever a collection provides them — this collection simply doesn't, so a targeted `show` is the pragmatic choice.
 
+### Pinning Semaphore's encryption key
+
+Semaphore encrypts its Key Store (SSH keys, the Ansible Vault password, the Cloudflare token) with a single AES-256 key, `SEMAPHORE_ACCESS_KEY_ENCRYPTION`. If it isn't set explicitly, Semaphore generates one and stores it inside the container filesystem — outside the data volume — so it is lost whenever the container is recreated, leaving the persisted database undecryptable ("cannot decrypt access key"). Because the Semaphore image is now a custom build that is rebuilt and recreated on deploy, the key is set explicitly: generated with `openssl rand -base64 32`, stored in 1Password, and injected via the gitignored `secrets-external.yaml` vault → `.env` → Compose. It is kept out of the committed vault because, combined with the database, it would expose every stored credential — including the Ansible Vault password.
+
 ## Security
 
 The general rule of storing encrypted creds in GitHub has come down to whether they could be used to access my homelab remotely, and therefore possibly my home network as well. If its just a cred that is used only for something within the lab, such as a local password, then I'm comfortable storing it encrypted in GitHub. If it is something that can be used externally, it stays out of GitHub, is injected when needed, and is stored in 1Password.
