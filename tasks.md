@@ -61,3 +61,4 @@ Provision worker node pools on kirby and dede via CAPI. Aim to have a functionin
 - Deploy OPNSense for hide NAT out to the internet/eero network (Deploy VM with VLAN 4 and 10 attached)
 - Disabled wifi on waddle once OPNSense is in place.
 - Switch DNS host management to using the Ansible API or a collection, rather than being in the Docker Compose file which requires a restart of the container every time a DNS record is added.
+- Add manually configured switch config items to Ansible playbook.
