@@ -37,7 +37,9 @@ services:
       - pihole
   semaphore:
     container_name: semaphore
-    image: semaphoreui/semaphore:latest
+    build:
+      context: .
+      dockerfile: semaphore.Dockerfile
     restart: unless-stopped
     ports:
       - "3000:3000"

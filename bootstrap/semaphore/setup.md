@@ -7,7 +7,8 @@ For now, as I'm interested in learning these steps, will run through the setup m
 1. Output a copy of the Semaphore public key `cat ~/.ssh/semaphore_service_key.pub`.
 1. Add the key to GitHub at https://github.com/uprightvinyl/homelab/settings/keys. Leave Allow write access un-ticked.
 1. Open Semaphore at http://10.0.10.10:3000/ and create a new project called "uprightlab".
-1. Add the Semaphore private key as a service key under Key Store. `cat ~/.ssh/semaphore_service_key`
+1. Add the Semaphore ed25519 private key as a service key under Key Store. `cat ~/.ssh/semaphore_service_key`.
+1. Add the Semaphore RSA private key as a service key under Key Store. `cat ~/.ssh/semaphore_rsa_key`.
 1. Add git@github.com:uprightvinyl/homelab.git as a repository.
 1. Add a new Inventory using ansible/inventory/hosts.yaml.
 1. Add a Variable Group called `external-secrets`, with a Secret environment variable called CLOUDFLARE_TUNNEL_TOKEN, add the CloudFlare Tunnel Token as the value, which is stored in 1Password.

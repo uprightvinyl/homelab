@@ -75,6 +75,14 @@
         owner: chris
         group: chris
 
+    - name: Copy Semaphore Dockerfile to waddle
+      copy:
+        src: "{{ playbook_dir }}/../../docker/waddle/semaphore.Dockerfile"
+        dest: /home/chris/docker/waddle/semaphore.Dockerfile
+        owner: chris
+        group: chris
+        mode: '0644'
+
     - name: Copy docker-compose file to waddle
       copy:
         src: "{{ playbook_dir }}/../../docker/waddle/docker-compose.yaml"
@@ -95,3 +103,4 @@
       community.docker.docker_compose_v2:
         project_src: /home/chris/docker/waddle
         state: present
+        build: always

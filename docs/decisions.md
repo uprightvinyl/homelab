@@ -37,7 +37,15 @@ Whilst AI tools are used to assist in building and operating this lab, they are 
 ### DNS
 
 - waddle will host an authoritative DNS server for the lab.
-- upstream DNS will be provided using Cloudflare (1.1.1.1), initially this will not use a tunnel for DNS-over-HTTPS from waddle. This is for simplicity as there is no real need to encrypt DNS requests at this stage. This decision may be reviewed in the future, more out of curiosity than necessity. 
+- upstream DNS will be provided using Cloudflare (1.1.1.1), initially this will not use a tunnel for DNS-over-HTTPS from waddle. This is for simplicity as there is no real need to encrypt DNS requests at this stage. This decision may be reviewed in the future, more out of curiosity than necessity.
+
+### Checking switch state with show commands, not gathered facts
+
+The bandee playbook needs to know the switch's current state — which VLANs exist, how ports are configured etc, so that a change is it only applied when something has actually drifted. The playbook does this by running targeted `show` commands with `community.ciscosmb.command` (e.g. `show vlan`) and guarding each change with a `when:` condition, rather than gathering structured facts with `community.ciscosmb.facts`.
+
+The facts module, `community.ciscosmb.facts`, is the obvious first choice, but it doesn't expose the data needed effectively. Its facts are limited to model, version, hardware, interfaces, neighbours and the raw running-config — there is no list of configured VLANs. The two facts that look relevant aren't: `ansible_net_config` is just the running-config as text (so the text still needs parsing, only its a larger blob - show vlan vs the full running config), and `ansible_net_interfaces` lists the Layer 3 VLAN *interfaces* (SVIs), not Layer 2 VLAN-database membership — a VLAN can exist without an SVI, so it would give the wrong answer.
+
+`show vlan` is therefore the most direct and authoritative source for "does this VLAN exist", and the lightest: the facts module runs a batch of show commands across every subset, whereas the guard needs just one. The general preference remains structured facts over text parsing wherever a collection provides them — this collection simply doesn't, so a targeted `show` is the pragmatic choice.
 
 ## Security
 
