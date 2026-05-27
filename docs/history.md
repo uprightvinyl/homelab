@@ -2,6 +2,12 @@
 
 ## May 2026
 
+### Wednesday 27th
+
+- Updated semaphore to run from a custom image build that supports RSA keys to connect to bandee
+- Added remaining switch config.
+- Milestone 1 now completed!
+
 ### Tuesday 26th
 
 - Moved to using Claude Code, still in advisory mode.

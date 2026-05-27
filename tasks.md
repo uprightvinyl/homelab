@@ -33,7 +33,7 @@ More info on the exact steps can be found here: [network/bandee/setup.md](networ
 
 - [x] Configure Semaphore — connect to GitHub repo and add service key
 - [x] Add lab host static DNS records to Pi-hole via Ansible
-- [ ] Use Ansible playbook to complete configuration of switch (additional VLANs, trunk ports, inter VLAN routing etc).
+- [x] Use Ansible playbook to complete configuration of switch (additional VLANs, trunk ports, inter VLAN routing etc).
 
 ## Milestone 2 — Compute
 
