@@ -30,8 +30,9 @@ network, hardware and build history.
 
 ## Conventions
 - British English throughout — spelling, terminology and comments.
-- Hostnames follow the pattern: hostname.lab.uprightlab.com
+- Hostnames follow the pattern: name.lab.uprightlab.com
 - All infrastructure is managed as code from this repository.
+- Markdown prose is written unwrapped — one line per paragraph, no manual line breaks at a fixed column; let the editor soft-wrap.
 
 ## Secrets
 - Never commit plaintext secrets or private keys to the repository.
