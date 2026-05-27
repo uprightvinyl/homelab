@@ -64,6 +64,29 @@
       changed_when: true
       notify: Save running config
 
+    - name: Read trunk port configs
+      community.ciscosmb.command:
+        commands: "show running-config interface {{ item.port }}"
+      loop: "{{ trunk_ports }}"
+      register: trunk_state
+      changed_when: false
+
+    - name: Ensure trunk ports are set
+      community.ciscosmb.command:
+        commands:
+          - configure terminal
+          - "interface {{ item.item.port }}"
+          - switchport mode trunk
+          - "switchport trunk native vlan {{ item.item.native }}"
+          - exit
+          - end
+      loop: "{{ trunk_state.results }}"
+      loop_control:
+        label: "{{ item.item.port }}"
+      when: "('switchport trunk native vlan ' ~ item.item.native | string) not in item.stdout[0]"
+      changed_when: true
+      notify: Save running config
+
   handlers:
     - name: Save running config
       community.ciscosmb.command:
