@@ -20,7 +20,6 @@
       loop:
         - 20
         - 30
-        - 40
       when: vlan_state.stdout[0] is not search('(?m)^\s*' ~ item ~ '\s')
       changed_when: true                 # only reached when the VLAN was missing
       notify: Save running config
@@ -42,7 +41,6 @@
       loop:
         - { vlan: 20, ip: 10.0.20.1, mask: 255.255.255.0 }
         - { vlan: 30, ip: 10.0.30.1, mask: 255.255.255.0 }
-        - { vlan: 40, ip: 10.0.40.1, mask: 255.255.255.0 }
       when: item.ip not in ip_int_state.stdout[0]
       changed_when: true
       notify: Save running config
