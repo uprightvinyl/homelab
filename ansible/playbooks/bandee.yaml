@@ -17,9 +17,7 @@
           - "vlan {{ item }}"
           - exit
           - end
-      loop:
-        - 20
-        - 30
+      loop: "{{ vlans }}"
       when: vlan_state.stdout[0] is not search('(?m)^\s*' ~ item ~ '\s')
       changed_when: true                 # only reached when the VLAN was missing
       notify: Save running config
@@ -38,10 +36,31 @@
           - "ip address {{ item.ip }} {{ item.mask }}"
           - exit
           - end
-      loop:
-        - { vlan: 20, ip: 10.0.20.1, mask: 255.255.255.0 }
-        - { vlan: 30, ip: 10.0.30.1, mask: 255.255.255.0 }
+      loop: "{{ svis }}"
       when: item.ip not in ip_int_state.stdout[0]
+      changed_when: true
+      notify: Save running config
+
+    - name: Read access port configs
+      community.ciscosmb.command:
+        commands: "show running-config interface {{ item.port }}"
+      loop: "{{ access_ports }}"
+      register: access_state
+      changed_when: false
+
+    - name: Ensure access ports are set
+      community.ciscosmb.command:
+        commands:
+          - configure terminal
+          - "interface {{ item.item.port }}"
+          - switchport mode access
+          - "switchport access vlan {{ item.item.vlan }}"
+          - exit
+          - end
+      loop: "{{ access_state.results }}"
+      loop_control:
+        label: "{{ item.item.port }}"
+      when: "('switchport access vlan ' ~ item.item.vlan | string) not in item.stdout[0]"
       changed_when: true
       notify: Save running config
 
