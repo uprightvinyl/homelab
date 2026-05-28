@@ -40,9 +40,9 @@ More info on the exact steps can be found here: [network/bandee/setup.md](networ
 Get the two beefy machines, ex-gaming kerbside found PC (kirby) and the existing homelab compute (dede), installed with Proxmox and tuned via Ansible. Provides two hypervisor nodes connected to the NAS (rick) for shared storage, managed as code.
 
 ### Stage 2a — Kirby build
-- [ ] Build Proxmox install media and answer file
-- [ ] Install Proxmox
-- [ ] Relocate node to homelab
+- [x] Relocate node to homelab
+- [x] Build Proxmox install media and answer file
+- [x] Install Proxmox
 
 ### Stage 2b — Dede build
 - [ ] Create answer file (reuse install media from Stage 2a)

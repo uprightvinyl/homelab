@@ -1,0 +1,22 @@
+[global]
+keyboard = "en-us"
+country = "au"
+fqdn = "kirby.lab.uprightlab.com"
+mailto = "chris@lab.uprightlab.com"
+timezone = "Australia/Sydney"
+root_password_hashed = "$6$leX/hvF8vCuKok5x$/2XMW0jJXljncg1TcpUAokqycZeV5eGI5aMUtpD.Jniq.GqD2F8vAY1W3e3aLeRag2zWc7K5.qFPInkLokkXF0"
+root_ssh_keys = [
+  "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAINiVgzG4B9lXj7STL4S+g/l95BXNWpYqkRIP3x1Qa89H chris",
+  "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIDpcI46P2n6aorYsAv2BBKLy7ZUwyRUdFlv5nUYOAw0V semaphore@waddle.lab.uprightlab.com",
+]
+
+[network]
+source = "from-answer"
+cidr = "10.0.10.12/24"
+gateway = "10.0.10.1"
+dns = "10.0.10.10"
+filter.ID_NET_NAME_MAC = "*1cb72cede5c4"
+
+[disk-setup]
+filesystem = "ext4"
+disk_list = ["sda"]
