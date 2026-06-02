@@ -1,7 +1,7 @@
 [global]
 keyboard = "en-us"
 country = "au"
-fqdn = "kirby.lab.uprightlab.com"
+fqdn = "dede.lab.uprightlab.com"
 mailto = "chris@lab.uprightlab.com"
 timezone = "Australia/Sydney"
 root_password_hashed = "$6$leX/hvF8vCuKok5x$/2XMW0jJXljncg1TcpUAokqycZeV5eGI5aMUtpD.Jniq.GqD2F8vAY1W3e3aLeRag2zWc7K5.qFPInkLokkXF0"
@@ -12,17 +12,17 @@ root_ssh_keys = [
 
 [network]
 source = "from-answer"
-cidr = "10.0.10.12/24"
+cidr = "10.0.10.11/24"
 gateway = "10.0.10.1"
 dns = "10.0.10.10"
-filter.ID_NET_NAME_MAC = "*1cb72cede5c4"
+filter.ID_NET_NAME_MAC = "*48210b336f80"
 
 [network.interface-name-pinning]
 enabled = true
 
 [network.interface-name-pinning.mapping]
-"1c:b7:2c:ed:e5:c4" = "lan0"
+"48:21:0b:33:6f:80" = "lan0"
 
 [disk-setup]
 filesystem = "ext4"
-disk_list = ["sda"]
+disk_list = ["nvme0n1"]
