@@ -12,3 +12,10 @@ all:
           ansible_become: true
           ansible_become_method: enable
           ansible_become_password: "{{ vault_bandee_enable_password }}"
+      children:
+        proxmox:
+          hosts:
+            dede:
+              ansible_host: 10.0.10.11
+            kirby:
+              ansible_host: 10.0.10.12

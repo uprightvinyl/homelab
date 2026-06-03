@@ -43,10 +43,21 @@ Get the two beefy machines, ex-gaming kerbside found PC (kirby) and the existing
 - [x] Relocate node to homelab
 - [x] Build Proxmox install media and answer file
 - [x] Install Proxmox
+- [x] Configure GPU passthrough with Ansible Playbook
 
 ### Stage 2b — Dede build
-- [ ] Create answer file (reuse install media from Stage 2a)
-- [ ] Install Proxmox
+- [x] Create answer file (reuse install media from Stage 2a)
+- [x] Install Proxmox
+
+### Stage 2c - Proxmox Ansible
+- [ ] Create API user for semaphore
+- [ ] Create and test basic Ansible runbook for proxmox hosts.
+
+### Stage 2d - Meta build
+- [ ] Create Ubuntu server media
+- [ ] Create Ubuntu cloudinit
+- [ ] Install Ubuntu Server
+- [ ] Onboard meta to Semaphore
 
 ## Milestone 3 — Kubernetes foundation
 

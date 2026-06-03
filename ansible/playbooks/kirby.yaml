@@ -1,0 +1,33 @@
+---
+- name: Enable IOMMU and VFIO for PCIe passthrough on kirby
+  hosts: kirby
+  gather_facts: false
+  become: true
+  tasks:
+    - name: Enable Intel IOMMU in GRUB
+      lineinfile:
+        path: /etc/default/grub
+        regexp: '^GRUB_CMDLINE_LINUX_DEFAULT='
+        line: 'GRUB_CMDLINE_LINUX_DEFAULT="quiet intel_iommu=on iommu=pt"'
+        backup: true
+      notify: Update GRUB
+
+    - name: Load VFIO modules at boot
+      copy:
+        dest: /etc/modules-load.d/vfio.conf
+        content: |
+          vfio
+          vfio_iommu_type1
+          vfio_pci
+        mode: '0644'
+      notify: Reboot required
+
+  handlers:
+    - name: Update GRUB
+      command: update-grub
+      listen: Update GRUB
+
+    - name: Reboot required
+      debug:
+        msg: "VFIO modules added — reboot kirby to apply all changes."
+      listen: Reboot required

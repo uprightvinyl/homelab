@@ -51,6 +51,14 @@ The facts module, `community.ciscosmb.facts`, is the obvious first choice, but i
 
 Semaphore encrypts its Key Store (SSH keys, the Ansible Vault password, the Cloudflare token) with a single AES-256 key, `SEMAPHORE_ACCESS_KEY_ENCRYPTION`. If it isn't set explicitly, Semaphore generates one and stores it inside the container filesystem — outside the data volume — so it is lost whenever the container is recreated, leaving the persisted database undecryptable ("cannot decrypt access key"). Because the Semaphore image is now a custom build that is rebuilt and recreated on deploy, the key is set explicitly: generated with `openssl rand -base64 32`, stored in 1Password, and injected via the gitignored `secrets-external.yaml` vault → `.env` → Compose. It is kept out of the committed vault because, combined with the database, it would expose every stored credential — including the Ansible Vault password.
 
+### Proxmox nodes managed via API; OS-level automation intentionally minimal
+
+Proxmox exposes a full REST API for everything hypervisor-specific: VM provisioning, storage, networking, cluster management and user administration. Rather than managing these through OS-level Ansible tasks over SSH, the `community.proxmox` collection is used to interact with the API directly. This is both safer (Proxmox owns its own config files, particularly `/etc/network/interfaces`) and more idiomatic — the same path used by Terraform, Cluster API and other ecosystem tooling.
+
+SSH-based Ansible automation on the Proxmox nodes is therefore intentionally minimal, limited to one-off OS-level changes that the API cannot make. The only task in this category is enabling Intel IOMMU and loading VFIO modules on kirby for GPU passthrough (`ansible/playbooks/kirby-iommu.yaml`), which is run once from the workstation and never needs to run again.
+
+The root user is left enabled on both nodes as the SSH bootstrap entry point. Day-to-day access and all ongoing automation use a Proxmox API token.
+
 ## Security
 
 The general rule of storing encrypted creds in GitHub has come down to whether they could be used to access my homelab remotely, and therefore possibly my home network as well. If its just a cred that is used only for something within the lab, such as a local password, then I'm comfortable storing it encrypted in GitHub. If it is something that can be used externally, it stays out of GitHub, is injected when needed, and is stored in 1Password.
