@@ -59,6 +59,18 @@ SSH-based Ansible automation on the Proxmox nodes is therefore intentionally min
 
 The root user is left enabled on both nodes as the SSH bootstrap entry point. Day-to-day access and all ongoing automation use a Proxmox API token.
 
+### Standalone Proxmox nodes, not a cluster
+
+kirby and dede are kept as standalone Proxmox nodes rather than joined into a cluster. The decision follows from storage: the NAS (rick) isn't performant enough to serve as primary VM storage, so VMs use node-local storage on each host. With local rather than shared storage, the two headline benefits of a Proxmox cluster — high-availability failover and seamless live migration — aren't available anyway, since both depend on shared storage. Clustering would therefore buy only management convenience, not resilience.
+
+It would also actively reduce robustness. A two-node cluster has no quorum majority, so if one node goes down the survivor loses quorum and drops to read-only — it can't start or stop VMs until the other returns. Two independent standalone nodes have no such failure mode; each is self-sufficient. Restoring quorum would mean adding a QDevice (a third corosync vote, typically hosted on waddle), which adds a component purely to claw back robustness that clustering gave away — a poor trade for management tidiness alone, and one that breaks the principle of keeping the Proxmox nodes' OS footprint minimal.
+
+Standalone nodes also suit the eventual Kubernetes design. Worker VMs provisioned via Cluster API are treated as cattle: they don't migrate, and if a node fails the cluster reprovisions elsewhere. That failure-handling already lives at the Kubernetes layer, so cluster-level HA underneath it would be redundant.
+
+### Unified management via Proxmox Datacenter Manager
+
+The one genuine benefit clustering offered — a single console across both nodes — is provided instead by Proxmox Datacenter Manager (PDM), which is purpose-built to manage multiple standalone nodes (and clusters) from one pane without joining them. This gives a unified inventory, guest and snapshot view across kirby and dede while each node stays fully independent, resolving the management-convenience question without reintroducing the quorum fragility above. PDM is used for human, console-based management; automation continues to talk to each node's API directly via Ansible and the community.proxmox collection. PDM runs as its own lightweight appliance (VM or LXC) alongside the nodes.
+
 ## Security
 
 The general rule of storing encrypted creds in GitHub has come down to whether they could be used to access my homelab remotely, and therefore possibly my home network as well. If its just a cred that is used only for something within the lab, such as a local password, then I'm comfortable storing it encrypted in GitHub. If it is something that can be used externally, it stays out of GitHub, is injected when needed, and is stored in 1Password.

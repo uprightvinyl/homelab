@@ -1,0 +1,44 @@
+#cloud-config
+autoinstall:
+  version: 1
+
+  locale: en_AU.UTF-8
+  keyboard:
+    layout: us
+  timezone: Australia/Sydney
+
+  identity:
+    hostname: meta
+    username: chris
+    password: "$6$q03PaxtFNsOXC/zF$zoLZRir0U/CrZ62tMTHG7qKPEoVknMzJZ.uegpeaF/KZLv3ejX9zoJTgsL5rBWLnAbquE/GY2Y.JnvwqXxXzA1"
+
+  ssh:
+    install-server: true
+    allow-pw: false
+    authorized-keys:
+      - "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAINiVgzG4B9lXj7STL4S+g/l95BXNWpYqkRIP3x1Qa89H chris"
+
+  network:
+    version: 2
+    ethernets:
+      usb-lan:
+        match:
+          name: "en*"
+        dhcp4: false
+        addresses:
+          - 10.0.20.10/24
+        routes:
+          - to: default
+            via: 10.0.20.1
+        nameservers:
+          addresses:
+            - 10.0.10.10
+          search:
+            - lab.uprightlab.com
+
+  storage:
+    layout:
+      name: lvm
+
+  packages:
+    - python3

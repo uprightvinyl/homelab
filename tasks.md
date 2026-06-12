@@ -49,15 +49,16 @@ Get the two beefy machines, ex-gaming kerbside found PC (kirby) and the existing
 - [x] Create answer file (reuse install media from Stage 2a)
 - [x] Install Proxmox
 
-### Stage 2c - Proxmox Ansible
-- [ ] Create API user for semaphore
-- [ ] Create and test basic Ansible runbook for proxmox hosts.
+### Stage 2c - Meta build
+- [x] Create Ubuntu server media
+- [x] Create Ubuntu cloudinit
+- [x] Install Ubuntu Server
+- [x] Move meta to lab
 
-### Stage 2d - Meta build
-- [ ] Create Ubuntu server media
-- [ ] Create Ubuntu cloudinit
-- [ ] Install Ubuntu Server
-- [ ] Onboard meta to Semaphore
+### Stage 2d - Ansible
+- [ ] Create proxmox API user for semaphore
+- [ ] Create and test basic Ansible runbook for proxmox hosts.
+- [ ] Onboard meta to Semaphore.
 
 ## Milestone 3 — Kubernetes foundation
 
@@ -73,3 +74,4 @@ Provision worker node pools on kirby and dede via CAPI. Aim to have a functionin
 - Disabled wifi on waddle once OPNSense is in place.
 - Switch DNS host management to using the Ansible API or a collection, rather than being in the Docker Compose file which requires a restart of the container every time a DNS record is added.
 - Add manually configured switch config items to Ansible playbook.
+- Deploy PDM

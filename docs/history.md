@@ -1,5 +1,11 @@
 # uprightlab — Build History
 
+## June 2026
+
+### Friday 12th
+
+- meta built, connected and SSH access confirmed
+
 ## May 2026
 
 ### Wednesday 27th
