@@ -1,8 +1,29 @@
+# Proxmox configuration playbook - runs using SSH from Macbook. 
+# Semaphore is configured to use the API user with Proxmox, it doesn't have SSH access.
+# These tasks therefore need to be run separately.
+# Note: Run this as root user, e.g.
+# ansible-playbook playbooks/proxmox-os.yaml -u root --private-key ~/.ssh/id_ed25519 --ask-vault-pass
+
 ---
+- name: Configure Proxmox host OS
+  hosts: proxmox
+  gather_facts: false
+  tasks:
+    - name: Create chris user
+      user:
+        name: chris
+        shell: /bin/bash
+        groups: sudo        # no effect until sudo is installed; forward-compatible
+        append: true
+
+    - name: Add chris SSH key
+      authorized_key:
+        user: chris
+        key: "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAINiVgzG4B9lXj7STL4S+g/l95BXNWpYqkRIP3x1Qa89H chris"
+        state: present
 - name: Enable IOMMU and VFIO for PCIe passthrough on kirby
   hosts: kirby
   gather_facts: false
-  become: true
   tasks:
     - name: Enable Intel IOMMU in GRUB
       lineinfile:
