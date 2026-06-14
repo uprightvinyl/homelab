@@ -2,6 +2,11 @@
 
 ## June 2026
 
+### Saturday 14th
+
+- Added chris user to proxmox hosts.
+- Onboarded proxmox hosts to semaphore.
+
 ### Saturday 13th
 
 - Replaced GPU in kirby with a secondhand RTX 3060 12GB.

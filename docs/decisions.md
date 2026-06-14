@@ -57,7 +57,7 @@ Proxmox exposes a full REST API for everything hypervisor-specific: VM provision
 
 SSH-based Ansible automation on the Proxmox nodes is therefore intentionally minimal, limited to one-off OS-level changes that the API cannot make. The only task in this category is enabling Intel IOMMU and loading VFIO modules on kirby for GPU passthrough (`ansible/playbooks/kirby-iommu.yaml`), which is run once from the workstation and never needs to run again.
 
-The root user is left enabled on both nodes as the SSH bootstrap entry point. Day-to-day access and all ongoing automation use a Proxmox API token.
+The root user is left enabled on both nodes as the SSH bootstrap entry point. A 'chris' user is added to proxmox hosts for SSH access that is consistent with all other hosts. However,  day-to-day access and all ongoing automation use a Proxmox API token.
 
 ### Standalone Proxmox nodes, not a cluster
 

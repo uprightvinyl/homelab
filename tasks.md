@@ -37,7 +37,7 @@ More info on the exact steps can be found here: [network/bandee/setup.md](networ
 
 ## Milestone 2 — Compute
 
-Get the two beefy machines, ex-gaming kerbside found PC (kirby) and the existing homelab compute (dede), installed with Proxmox and tuned via Ansible. Provides two hypervisor nodes connected to the NAS (rick) for shared storage, managed as code.
+Get the compute hardware built and moved into the lab. That covers the two beefy machines, ex-gaming kerbside found PC (kirby) and the existing homelab compute (dede), and the Dell XPS laptop. OS installed, and ready for config using ansible from Semaphore.
 
 ### Stage 2a — Kirby build
 - [x] Relocate node to homelab
@@ -56,15 +56,19 @@ Get the two beefy machines, ex-gaming kerbside found PC (kirby) and the existing
 - [x] Move meta to lab
 
 ### Stage 2d - Ansible
-- [ ] Create proxmox API user for semaphore
-- [ ] Create and test basic Ansible runbook for proxmox hosts.
+- [x] Create proxmox API user for semaphore
+- [x] Create and test basic Ansible runbook for proxmox hosts.
 - [ ] Onboard meta to Semaphore.
 
-## Milestone 3 — Kubernetes foundation
+## Milestone 3 — Proxmox Config and OPNsense
+
+Build out full proxmox config (storage connectivity, DNS, NTP, virtual networks, templates, ISOs), and deploy first VM - OPNsense. That will allow internet connectivity from all nodes in the lab, and allow for  switching off the wifi card in waddle.
+
+## Milestone 4 — Kubernetes foundation
 
 Preparing for Kubernetes, use the spare XPS laptop (meta) to run as a bare metal Kubernetes control plane. Install Kubernetes control plane and CAPI elements, and get connected to the Proxmox API so as to provision VMs as worker nodes.
 
-## Milestone 4 — Kubernetes workloads
+## Milestone 5 — Kubernetes workloads
 
 Provision worker node pools on kirby and dede via CAPI. Aim to have a functioning multi-node cluster ready for workloads, including GPU-enabled workers on kirby. Deploy AWX.
 
