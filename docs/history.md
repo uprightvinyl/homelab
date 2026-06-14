@@ -2,6 +2,10 @@
 
 ## June 2026
 
+### Saturday 13th
+
+- Replaced GPU in kirby with a secondhand RTX 3060 12GB.
+
 ### Friday 12th
 
 - meta built, connected and SSH access confirmed

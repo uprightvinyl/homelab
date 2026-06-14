@@ -23,7 +23,7 @@
 - Motherboard: ASUS Z170-Deluxe
 - RAM: 32GB (4 x 8GB) Corsair DDR4 2133MHz
 - Storage: 500GB Crucial BX100 SATA SSD
-- GPU: Gigabyte GTX 980 Ti Xtreme Gaming 6GB (PCIe passthrough)
+- GPU: GeForce RTX™ 3060 VENTUS 2X 12GB (PCIe passthrough)
 
 ### rick — QNAP TS-251
 - Hostname: rick.lab.uprightlab.com
