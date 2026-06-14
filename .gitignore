@@ -8,3 +8,6 @@
 *.ppk
 id_rsa
 id_ed25519
+
+# System
+.DS_Store
