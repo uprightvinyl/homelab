@@ -1,0 +1,7 @@
+# API credentials for the semaphore@pve token on each Proxmox node.
+# The token secret differs per host and lives in each node's vault
+# (host_vars/<node>/secrets.yaml as vault_proxmox_token_secret).
+proxmox_api_user: "semaphore@pve"
+proxmox_api_token_id: "automation"
+proxmox_api_token_secret: "{{ vault_proxmox_token_secret }}"
+proxmox_api_validate_certs: false

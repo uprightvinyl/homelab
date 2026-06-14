@@ -1,0 +1,19 @@
+---
+- name: Test Proxmox API connectivity
+  hosts: proxmox
+  connection: local          # modules run on the control node, calling each node's API
+  gather_facts: false
+  vars:
+    ansible_python_interpreter: "{{ ansible_playbook_python }}"
+  tasks:
+    - name: Get node info
+      community.proxmox.proxmox_node_info:
+        api_host: "{{ ansible_host }}"
+        api_user: "{{ proxmox_api_user }}"
+        api_token_id: "{{ proxmox_api_token_id }}"
+        api_token_secret: "{{ proxmox_api_token_secret }}"
+      register: node_info
+
+    - name: Show node info
+      debug:
+        var: node_info.proxmox_nodes

@@ -1,0 +1,17 @@
+---
+- name: Configure Proxmox host OS
+  hosts: proxmox
+  gather_facts: false
+  tasks:
+    - name: Create chris user
+      user:
+        name: chris
+        shell: /bin/bash
+        groups: sudo        # no effect until sudo is installed; forward-compatible
+        append: true
+
+    - name: Add chris SSH key
+      authorized_key:
+        user: chris
+        key: "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAINiVgzG4B9lXj7STL4S+g/l95BXNWpYqkRIP3x1Qa89H chris"
+        state: present

@@ -26,3 +26,6 @@ RUN install -d -m 700 /root/.ssh \
  && printf 'Host 192.168.4.254\n    HostKeyAlgorithms +ssh-rsa\n    PubkeyAcceptedAlgorithms +ssh-rsa\n' \
       | tee /root/.ssh/config >> /etc/ssh/ssh_config \
  && chmod 600 /root/.ssh/config
+
+ # Install proxmoxer for Proxmox API interaction
+ RUN pip install --break-system-packages proxmoxer requests
