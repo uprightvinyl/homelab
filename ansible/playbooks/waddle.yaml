@@ -103,4 +103,4 @@
       community.docker.docker_compose_v2:
         project_src: /home/chris/docker/waddle
         state: present
-        build: always
+        build: policy #change to always to force a rebuild if the compose file has changed.
