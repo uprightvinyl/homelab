@@ -12,6 +12,8 @@ all:
           ansible_become: true
           ansible_become_method: enable
           ansible_become_password: "{{ vault_bandee_enable_password }}"
+        meta:
+          ansible_host: 10.0.20.10
       children:
         proxmox:
           hosts:

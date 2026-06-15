@@ -1,0 +1,65 @@
+---
+- name: Configure meta
+  hosts: meta
+  become: true
+  tasks:
+    # --- Onboarding: semaphore service account ---
+    - name: Create semaphore user
+      user:
+        name: semaphore
+        groups: sudo
+        shell: /bin/bash
+        append: true
+
+    - name: Configure passwordless sudo for semaphore
+      lineinfile:
+        path: /etc/sudoers.d/semaphore
+        line: 'semaphore ALL=(ALL) NOPASSWD:ALL'
+        create: true
+        mode: '0440'
+        validate: '/usr/sbin/visudo -cf %s'
+
+    - name: Add service key to semaphore user
+      authorized_key:
+        user: semaphore
+        key: "{{ lookup('file', playbook_dir + '/../files/semaphore_service_key.pub') }}"
+        state: present
+
+    # --- Host reliability: keep this control plane up and reachable ---
+    - name: Keep meta running with the lid closed
+      copy:
+        dest: /etc/systemd/logind.conf.d/99-lid.conf
+        content: |
+          [Login]
+          HandleLidSwitch=ignore
+          HandleLidSwitchExternalPower=ignore
+          HandleLidSwitchDocked=ignore
+        mode: '0644'
+      notify: Restart systemd-logind
+
+    - name: Set kernel parameters (clear stale autoinstall; stop USB/PCIe power saving)
+      lineinfile:
+        path: /etc/default/grub
+        regexp: '^GRUB_CMDLINE_LINUX_DEFAULT='
+        line: 'GRUB_CMDLINE_LINUX_DEFAULT="quiet usbcore.autosuspend=-1 pcie_aspm=off"'
+        backup: true
+      notify: Update GRUB
+
+    - name: Never let the control plane suspend or hibernate
+      systemd:
+        name: "{{ item }}"
+        masked: true
+      loop:
+        - sleep.target
+        - suspend.target
+        - hibernate.target
+        - hybrid-sleep.target
+
+  handlers:
+    - name: Restart systemd-logind
+      systemd:
+        name: systemd-logind
+        state: restarted
+
+    - name: Update GRUB
+      command: update-grub
