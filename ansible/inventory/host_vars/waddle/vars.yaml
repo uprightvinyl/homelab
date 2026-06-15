@@ -3,4 +3,4 @@ cloudflare_tunnel_token: "{{ vault_cloudflare_tunnel_token | default(lookup('env
 semaphore_password: "{{ vault_semaphore_password }}"
 semaphore_email: "{{ vault_semaphore_email }}"
 semaphore_user: "{{ vault_semaphore_user }}"
-semaphore_access_key_encryption: "{{ vault_semaphore_access_key_encryption }}"
+semaphore_access_key_encryption: "{{ vault_semaphore_access_key_encryption | default(lookup('env', 'SEMAPHORE_ACCESS_KEY_ENCRYPTION')) }}"
