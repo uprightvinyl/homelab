@@ -58,11 +58,21 @@ Get the compute hardware built and moved into the lab. That covers the two beefy
 ### Stage 2d - Ansible
 - [x] Create proxmox API user for semaphore
 - [x] Create and test basic Ansible runbook for proxmox hosts.
-- [ ] Onboard meta to Semaphore.
+- [x] Onboard meta to Semaphore.
 
 ## Milestone 3 — Proxmox Config and OPNsense
 
 Build out full proxmox config (storage connectivity, DNS, NTP, virtual networks, templates, ISOs), and deploy first VM - OPNsense. That will allow internet connectivity from all nodes in the lab, and allow for  switching off the wifi card in waddle.
+
+### Stage 3a — Proxmox networking & storage
+- [x] Make vmbr0 VLAN-aware on both nodes
+- [ ] Decide and configure ISO storage (local vs rick NFS)
+- [ ] Configure NTP
+
+### Stage 3b — OPNsense
+- [ ] Upload OPNsense ISO
+- [ ] Deploy OPNsense VM (VLAN 4 WAN + VLAN 10 LAN)
+- [ ] Point bandee default route at OPNsense; disable waddle wifi
 
 ## Milestone 4 — Kubernetes foundation
 

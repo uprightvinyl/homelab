@@ -1,8 +1,20 @@
 # uprightlab — Build History
 
+## July 2026
+
+### Friday 3rd
+
+- Moved proxmox network config to a task in sempahore
+
 ## June 2026
 
-### Saturday 14th
+### Monday 15th
+
+- Onboarded meta to ansible and semaphore.
+- Hardened config on meta to avoid sleep.
+- Switch proxmox nodes to be VLAN-aware. Management IP stays untagged on native VLAN 10.
+
+### Sunday 14th
 
 - Added chris user to proxmox hosts.
 - Onboarded proxmox hosts to semaphore.

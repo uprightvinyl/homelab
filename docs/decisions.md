@@ -34,6 +34,12 @@ Whilst AI tools are used to assist in building and operating this lab, they are 
 - The initial bootstrap configuration of waddle will be carried out using an Ansible playbook run from the Macbook workstation.
 - waddle will use SQLite for the Semaphore database, its embedded so keeps things simple by avoiding another container for MYSQL or PostgreSQL.
 
+### VLAN-aware bridge on the Proxmox nodes
+
+Each node's `vmbr0` bridge is made VLAN-aware. The uplink `lan0` sits on a switch trunk carrying VLANs 4, 10, 20 and 30, so a VLAN-aware bridge lets each VM's NIC be tagged onto the VLAN it belongs to — for example OPNsense with a WAN leg on VLAN 4 and a LAN leg on VLAN 10, and future Kubernetes workers on VLAN 20.
+
+The node's own management IP stays on `vmbr0` directly, untagged. Because the trunk's native VLAN is 10 — the management VLAN — untagged frames from the host are treated as VLAN 10 by the switch in both directions, so management connectivity is preserved when the bridge becomes VLAN-aware. The IP is deliberately not moved to a tagged VLAN sub-interface: that would send tagged frames where the switch expects untagged native traffic and would break access. This only holds because the management subnet aligns with the trunk's native VLAN; if management were on a tagged-only VLAN, a tagged sub-interface would be required instead.
+
 ### DNS
 
 - waddle will host an authoritative DNS server for the lab.
@@ -55,7 +61,7 @@ Semaphore encrypts its Key Store (SSH keys, the Ansible Vault password, the Clou
 
 Proxmox exposes a full REST API for everything hypervisor-specific: VM provisioning, storage, networking, cluster management and user administration. Rather than managing these through OS-level Ansible tasks over SSH, the `community.proxmox` collection is used to interact with the API directly. This is both safer (Proxmox owns its own config files, particularly `/etc/network/interfaces`) and more idiomatic — the same path used by Terraform, Cluster API and other ecosystem tooling.
 
-SSH-based Ansible automation on the Proxmox nodes is therefore intentionally minimal, limited to one-off OS-level changes that the API cannot make. The only task in this category is enabling Intel IOMMU and loading VFIO modules on kirby for GPU passthrough (`ansible/playbooks/kirby-iommu.yaml`), which is run once from the workstation and never needs to run again.
+SSH-based Ansible automation on the Proxmox nodes is therefore intentionally minimal, limited to one-off OS-level changes that the API cannot make. The only task in this category is enabling Intel IOMMU and loading VFIO modules on kirby for GPU passthrough (`ansible/playbooks/proxmox-os.yaml`), which is run once from the workstation and never needs to run again.
 
 The root user is left enabled on both nodes as the SSH bootstrap entry point. A 'chris' user is added to proxmox hosts for SSH access that is consistent with all other hosts. However,  day-to-day access and all ongoing automation use a Proxmox API token.
 
@@ -104,18 +110,11 @@ As bandee doesn't support ED25519, RSA keys are used instead. This has to be gen
 
 ### Security Related Convenience Tradeoffs Accepted for the Lab
 
-A few settings consciously favour convenience over hardening, because this is a
-non-critical learning environment on a trusted local network with no
-internet-facing services:
+A few settings consciously favour convenience over hardening, because this is a non-critical learning environment on a trusted local network with no internet-facing services:
 
-- **`host_key_checking = False`** (`ansible/ansible.cfg`) — Ansible does not
-  verify SSH host keys. This avoids failures when hosts are rebuilt and their
-  keys change, at the cost of host-key verification on the lab LAN. It would be
-  re-enabled in a production or untrusted environment.
+- **`host_key_checking = False`** (`ansible/ansible.cfg`) — Ansible does not verify SSH host keys. This avoids failures when hosts are rebuilt and their keys change, at the cost of host-key verification on the lab LAN. It would be re-enabled in a production or untrusted environment.
 - **Passwordless sudo (`NOPASSWD:ALL`)** for the `chris` and `semaphore` users
-  — lets cloud-init and Semaphore automate configuration without interactive
-  prompts. The blast radius is limited to the lab, and access still requires the
-  relevant SSH private key.
+  — lets cloud-init and Semaphore automate configuration without interactive prompts. The blast radius is limited to the lab, and access still requires the relevant SSH private key.
 
 ## OS Choice
 
