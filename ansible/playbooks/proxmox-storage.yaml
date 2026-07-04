@@ -1,0 +1,25 @@
+---
+- name: Configure Proxmox storage
+  hosts: proxmox
+  connection: local
+  gather_facts: false
+  vars:
+    ansible_python_interpreter: "{{ ansible_playbook_python }}"
+  module_defaults:
+    group/community.proxmox.proxmox:
+      api_host: "{{ ansible_host }}"
+      api_user: "{{ proxmox_api_user }}"
+      api_token_id: "{{ proxmox_api_token_id }}"
+      api_token_secret: "{{ proxmox_api_token_secret }}"
+      validate_certs: false
+  tasks:
+    - name: Add rick NFS for ISOs, templates, backups
+      community.proxmox.proxmox_storage:
+        name: rick-nfs
+        type: nfs
+        content: [iso, vztmpl, backup]
+        nodes: ["{{ inventory_hostname }}"]
+        nfs_options:
+          server: 192.168.4.20
+          export: /proxmox
+        state: present
