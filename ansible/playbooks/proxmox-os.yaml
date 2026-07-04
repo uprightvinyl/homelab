@@ -21,6 +21,15 @@
         user: chris
         key: "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAINiVgzG4B9lXj7STL4S+g/l95BXNWpYqkRIP3x1Qa89H chris"
         state: present
+
+    - name: Point chrony at the waddle NTP server
+      copy:
+        dest: /etc/chrony/conf.d/waddle.conf
+        content: |
+          server 10.0.10.10 iburst prefer
+        mode: '0644'
+      notify: Restart chrony
+
 - name: Enable IOMMU and VFIO for PCIe passthrough on kirby
   hosts: kirby
   gather_facts: false

@@ -10,6 +10,8 @@ services:
       - "443:443/tcp"
       - "67:67/udp"
       - "123:123/udp"
+    cap_add:
+      - SYS_TIME
     environment:
       TZ: Australia/Sydney
       FTLCONF_webserver_api_password: ${PIHOLE_PASSWORD}
@@ -23,6 +25,9 @@ services:
         address=/meta.lab.uprightlab.com/10.0.20.10;
         address=/bandee.lab.uprightlab.com/192.168.4.254;
         address=/rick.lab.uprightlab.com/192.168.4.10
+      FTLCONF_ntp_ipv4_active: 'true'
+      FTLCONF_ntp_sync_active: 'true'
+      FTLCONF_ntp_sync_server: 'au.pool.ntp.org'
     volumes:
       - './etc-pihole:/etc/pihole'
   cloudflared:
