@@ -10,7 +10,6 @@ svis:
 access_ports:
   - { port: gi2, vlan: 4 }    # rick
   - { port: gi9, vlan: 20 }   # meta
-  - { port: gi25, vlan: 10 }    # rick
 
 trunk_ports:
   - { port: gi3, native: 10 }   # dede

@@ -19,7 +19,6 @@
 | kirby | 10 | `10.0.10.0/24` | `10.0.10.12` |
 | meta | 20 | `10.0.20.0/24` | `10.0.20.10` |
 | rick | 4 | `192.168.4.0/22` | `192.168.4.20` |
-| rick | 10 | `10.0.10.0/24` | `10.0.10.20` |
 
 ## Switch Ports
 
@@ -31,9 +30,12 @@
 | gi4  | kirby | 4, 10, 20, 30 | Trunk |
 | gi5-gi8 | Reserved for future compute hosts | - | - |
 | gi9  | meta | 20 | Access |
-| gi25 | rick | 10 | Access |
 | gi26 | Eero uplink | 4 | Access |
 
+## Routing
+Routing for the lab is managed by bandee. 
+
+Rick has a static route configured so that can communicate with the lab (10.0.0.0/16) whilst ist default gateway is the eero device. 
 
 ## DNS
 
@@ -47,9 +49,13 @@ DHCP in the lab is handled by waddle. Range TBC.
 
 DHCP in the home network is handled by the Eero devices.
 
+## NTP
+
+Handled by pihole on waddle for entire network. 
+
 ## Internet Access
 
-Internet access for the lab routes via the Cisco switch, Eero and 5g modem. 
+Initially, Internet access is unavailable for any lab devices other than waddle (via wifi adapter) and bandee. Once the lab is sufficiently bootstrapped, internet access will be via an OPNSense VM.
 
 ## Firewalling
 
