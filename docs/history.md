@@ -2,8 +2,19 @@
 
 ## July 2026
 
+### Sunday 5th
+
+- Configured second disk on dede
+
+### Saturday 4th
+
+- Added NFS storage from rick to the two proxmox hosts
+- Added static route on rick so it can route to the 10.x.x.x networks
+- Configured NTP on waddle and configured all other hosts to use waddle for their time source (including bandee)
+
 ### Friday 3rd
 
+- Added VLAN aware networking to proxmox hosts
 - Moved proxmox network config to a task in sempahore
 
 ## June 2026

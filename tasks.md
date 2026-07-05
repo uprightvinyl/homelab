@@ -66,13 +66,18 @@ Build out full proxmox config (storage connectivity, DNS, NTP, virtual networks,
 
 ### Stage 3a — Proxmox networking & storage
 - [x] Make vmbr0 VLAN-aware on both nodes
-- [ ] Decide and configure ISO storage (local vs rick NFS)
-- [ ] Configure NTP
+- [x] Decide and configure ISO storage (local vs rick NFS)
+- [x] Configure NTP
+- [x] Add dede's MX500 as an lvmthin VM pool
 
 ### Stage 3b — OPNsense
 - [ ] Upload OPNsense ISO
 - [ ] Deploy OPNsense VM (VLAN 4 WAN + VLAN 10 LAN)
 - [ ] Point bandee default route at OPNsense; disable waddle wifi
+
+### Stage 3c - Proxmox post internet connectivity config
+- [ ] Switch to no-subscription repos + updates
+- [ ] Install sudo on Proxmox nodes
 
 ## Milestone 4 — Kubernetes foundation
 

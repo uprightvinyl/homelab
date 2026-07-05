@@ -77,6 +77,26 @@ Standalone nodes also suit the eventual Kubernetes design. Worker VMs provisione
 
 The one genuine benefit clustering offered — a single console across both nodes — is provided instead by Proxmox Datacenter Manager (PDM), which is purpose-built to manage multiple standalone nodes (and clusters) from one pane without joining them. This gives a unified inventory, guest and snapshot view across kirby and dede while each node stays fully independent, resolving the management-convenience question without reintroducing the quorum fragility above. PDM is used for human, console-based management; automation continues to talk to each node's API directly via Ansible and the community.proxmox collection. PDM runs as its own lightweight appliance (VM or LXC) alongside the nodes.
 
+### Routed access to the NAS, not a dedicated storage NIC
+
+The Proxmox nodes and the NAS (rick) sit on different VLANs — the nodes on management VLAN 10, rick on the home VLAN 4 (192.168.4.20), where it also serves home devices. To give the nodes access to rick's NFS shares (ISOs, templates, backups), rick is reached by routing rather than by giving it a second interface on a lab VLAN.
+
+A dedicated second NIC on rick (VLAN 10) was tried first, as it keeps storage traffic on a lab VLAN and off the home network. However, the QNAP would not reliably persist a static IP on its second interface — it applied, then reverted to an APIPA address — so the approach was abandoned. Instead, rick stays single-homed on VLAN 4, with a static route (10.0.0.0/16 via bandee at 192.168.4.254) so its replies reach the lab VLANs; the nodes reach rick via bandee's inter-VLAN routing, and rick replies via the static route.
+
+This is a clean trade for shared, non-performance-critical content. bandee (an SG350) routes between VLANs in hardware at line rate, so the extra hop costs no meaningful throughput for ISO/backup traffic, and VM disks stay on node-local storage anyway. Compute stays off the Eero network — only rick's single NIC and bandee's management remain there — so the original separation goal is preserved without the second NIC.
+
+### Internal NTP source on waddle
+
+The lab has no outbound internet yet (pending OPNsense), so the hosts cannot reach public NTP pools directly. waddle is the exception — it has internet via its temporary wifi connection — so it acts as the lab's internal time source: it syncs accurate time from a public pool and serves it inward to the internet-less hosts.
+
+This uses Pi-hole's built-in NTP server (Pi-hole v6 / FTL includes one), so no extra service is needed — waddle's single Pi-hole container already provides DNS, DHCP and NTP. The Proxmox nodes (chrony), meta (systemd-timesyncd) and bandee (SNTP) all point at waddle. This keeps time working before OPNsense exists, and remains good practice afterwards: a single authoritative internal source means every host agrees on time even if the internet drops, which matters for TLS certificates, cluster tokens and correlating logs.
+
+### dede's second disk as a local VM storage pool
+
+dede has asymmetric storage: a 250 GB NVMe holding Proxmox and its default local-lvm, plus a 1 TB Crucial MX500 left unused after install. The MX500 is initialised as its own LVM thin pool (the `mx500` storage) for VM disks and container volumes, giving dede ~1 TB of node-local VM storage rather than the ~137 GB on the NVMe.
+
+This is consistent with the node-local-storage decision (VM disks on local storage, not the NAS). The disk initialisation is a one-off hardware-provisioning step documented in bootstrap/dede/setup.md rather than an idempotent playbook, since it runs once and can't be cleanly re-applied. kirby, with a single SSD, has no equivalent second pool.
+
 ## Security
 
 The general rule of storing encrypted creds in GitHub has come down to whether they could be used to access my homelab remotely, and therefore possibly my home network as well. If its just a cred that is used only for something within the lab, such as a local password, then I'm comfortable storing it encrypted in GitHub. If it is something that can be used externally, it stays out of GitHub, is injected when needed, and is stored in 1Password.
