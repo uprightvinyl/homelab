@@ -61,3 +61,8 @@
       debug:
         msg: "VFIO modules added — reboot kirby to apply all changes."
       listen: Reboot required
+
+    - name: Restart chrony
+      service:
+        name: chrony
+        state: restarted

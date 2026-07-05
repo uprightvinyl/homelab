@@ -87,6 +87,24 @@
       changed_when: true
       notify: Save running config
 
+    - name: Read SNTP config
+      community.ciscosmb.command:
+        commands: show sntp configuration
+      register: sntp_state
+      changed_when: false
+
+    - name: Configure SNTP server (waddle)
+      community.ciscosmb.command:
+        commands:
+          - configure terminal
+          - sntp unicast client enable
+          - sntp unicast client poll
+          - sntp server 10.0.10.10
+          - end
+      when: "'10.0.10.10' not in sntp_state.stdout[0]"
+      changed_when: true
+      notify: Save running config
+
   handlers:
     - name: Save running config
       community.ciscosmb.command:

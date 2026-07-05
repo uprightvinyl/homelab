@@ -55,6 +55,21 @@
         - hibernate.target
         - hybrid-sleep.target
 
+    - name: Ensure timesyncd drop-in directory exists
+      file:
+        path: /etc/systemd/timesyncd.conf.d
+        state: directory
+        mode: '0755'
+
+    - name: Point systemd-timesyncd at the waddle NTP server
+      copy:
+        dest: /etc/systemd/timesyncd.conf.d/waddle.conf
+        content: |
+          [Time]
+          NTP=10.0.10.10
+        mode: '0644'
+      notify: Restart timesyncd
+
   handlers:
     - name: Restart systemd-logind
       systemd:
@@ -63,3 +78,8 @@
 
     - name: Update GRUB
       command: update-grub
+    
+    - name: Restart timesyncd
+      systemd:
+        name: systemd-timesyncd
+        state: restarted
