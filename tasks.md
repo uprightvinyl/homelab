@@ -1,5 +1,7 @@
 # uprightlab — Tasks
 
+> Note: Lab Worked Paused due to relocation. Status prior to power down: OPNsense base interfaces done (VLAN-10 LAN untagged); cutover NOT done; OPNsense API/Ansible config pending; then AWS pivot.
+
 ## Milestone 0 — Preparation
 
 This milestone prepares the MacBook so it is able to complete the rest of the lab build.
@@ -70,10 +72,32 @@ Build out full proxmox config (storage connectivity, DNS, NTP, virtual networks,
 - [x] Configure NTP
 - [x] Add dede's MX500 as an lvmthin VM pool
 
-### Stage 3b — OPNsense
-- [ ] Upload OPNsense ISO
-- [ ] Deploy OPNsense VM (VLAN 4 WAN + VLAN 10 LAN)
-- [ ] Point bandee default route at OPNsense; disable waddle wifi
+### Stage 3b — OPNsense (via OpenTofu)
+
+**OpenTofu foundation**
+- [x] Install OpenTofu (add to Brewfile)
+- [x] Create tofu project skeleton (providers.tf, main.tf, variables.tf)
+- [x] Wire bpg/proxmox provider to the API token (env var, not committed)
+- [x] Gitignore tfstate, .terraform/, tfvars
+
+**ISO**
+- [x] Download OPNsense installer ISO
+- [x] Upload ISO to rick-nfs
+
+**Provision VM**
+- [x] Define OPNsense VM in OpenTofu (dede; boot from ISO; net0 tag=4 WAN, net1 tag=10 LAN; local disk)
+- [x] tofu apply to create the VM
+
+**Install & configure**
+- [x] Install OPNsense from ISO (console/VNC)
+- [x] Configure WAN (VLAN 4) and LAN (VLAN 10) interfaces
+- [ ] Configure outbound NAT for lab subnets (10.x)
+- [ ] Decide how much OPNsense config is captured as code vs GUI
+
+**Cut over**
+- [ ] Point bandee default route at OPNsense LAN
+- [ ] Verify lab internet from a Proxmox node
+- [ ] Disable waddle wifi
 
 ### Stage 3c - Proxmox post internet connectivity config
 - [ ] Switch to no-subscription repos + updates

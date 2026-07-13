@@ -2,6 +2,18 @@
 
 meta is a Dell XPS 13 9350 running Ubuntu Server 24.04 LTS on bare metal, to act as the Kubernetes control plane. It is installed unattended using Ubuntu's autoinstall (subiquity), driven by the cloud-init files in [cloud-init/meta](../../cloud-init/meta).
 
+## BIOS Configuration
+
+meta (Dell XPS 13 9350) ships with the SATA controller in **RAID On** mode (Intel RST), and the Ubuntu installer cannot see the internal SSD through it — the installer reports "no disks discovered". Switch it to AHCI before installing:
+
+1. Power on and hit `F2` to enter BIOS setup.
+1. Under **System Configuration** (or Storage), find **SATA Operation**.
+1. Change it from **RAID On** to **AHCI**.
+1. If a **VMD** (Volume Management Device) option is present, disable it.
+1. Save and exit.
+
+This exposes the SSD to the installer. It's safe here (switching to AHCI would break an existing Windows install, but the disk is being wiped anyway). Boot the installer via the `F12` one-time boot menu.
+
 ## Image Setup
 
 0. Ensure [workstation/setup.md](../workstation/setup.md) has been completed.

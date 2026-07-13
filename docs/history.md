@@ -2,6 +2,12 @@
 
 ## July 2026
 
+### Monday 13th July
+
+- Opentofu bootstratped and OPNsense VM deployed.
+- OPNsense installed and interfaces configured.
+- Lab cleanly shutdown for tranist.
+
 ### Sunday 5th
 
 - Configured second disk on dede
