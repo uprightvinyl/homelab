@@ -46,3 +46,12 @@
 - Role: core network switch
 - Ports: 28 x Gigabit Ethernet
 - Features: managed, VLAN capable
+
+### coo — Ubiquiti EdgeRouter ERLite-3
+- Hostname: coo.lab.uprightlab.com
+- Role: edge router / NAT gateway
+- CPU: Dual-core 500MHz Cavium Octeon (MIPS64)
+- RAM: 512MB
+- Storage: Onboard USB flash
+- Ports: 3 x Gigabit Ethernet (eth0 WAN, eth1 LAN, eth2 spare)
+- Features: hardware offload for line-rate NAT/routing

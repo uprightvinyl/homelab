@@ -97,6 +97,18 @@ dede has asymmetric storage: a 250 GB NVMe holding Proxmox and its default local
 
 This is consistent with the node-local-storage decision (VM disks on local storage, not the NAS). The disk initialisation is a one-off hardware-provisioning step documented in bootstrap/dede/setup.md rather than an idempotent playbook, since it runs once and can't be cleanly re-applied. kirby, with a single SSD, has no equivalent second pool.
 
+### coo (EdgeRouter) as the lab's edge NAT
+
+Internet access and outbound NAT for the lab are provided by coo, a Ubiquiti EdgeRouter ERLite-3, rather than by the previously planned OPNsense VM (and the interim waddle wifi workaround). A dedicated hardware router at the edge is always on and independent of any hypervisor, which removes a bootstrap dependency: the device that gives the lab internet no longer needs a Proxmox or Nutanix host to be running first. This is what lets the new Nutanix host be built — with internet access and its final management IP — before the rest of the lab returns.
+
+coo owns only the edge role: WAN, outbound NAT and, later, firewalling to the outside. bandee keeps inter-VLAN (east-west) routing, which it does in hardware at line rate; making the EdgeRouter the sole gateway would hairpin all inter-VLAN traffic through its single trunk link (router-on-a-stick). The end state is therefore a router at the edge (coo) and an L3 switch in the core (bandee), with bandee default-routing out to coo.
+
+The management and gateway address 10.0.10.1 is kept constant across the relocation. While the lab is in transit, coo holds 10.0.10.1 as the standalone gateway; when the lab returns, bandee reclaims 10.0.10.1 as its VLAN 10 SVI and coo is rebuilt as edge-only. The two are never live simultaneously, so there is no address conflict, and hosts built now (the Nutanix host) keep their gateway unchanged — only their DNS entry moves from coo to waddle.
+
+### Home internet: Virgin in modem mode, Eero as the router
+
+When the lab and the Eero return, the upstream Virgin Hub 5 will be put into modem mode (a transparent bridge) with the Eero running as the primary router on 192.168.4.0/22. This keeps all of the Eero's functionality — bridging the Eero to an access point would lose it — while removing the Virgin's redundant NAT layer, so home devices are single-NATed and the lab (behind coo) is double-NATed rather than triple. coo's WAN then faces the Eero network. Because the lab NATs behind coo as a single 192.168.4.x host, the Eero never needs static routes to the 10.x lab subnets — which is what allows the original waddle wifi workaround to be retired.
+
 ## Security
 
 The general rule of storing encrypted creds in GitHub has come down to whether they could be used to access my homelab remotely, and therefore possibly my home network as well. If its just a cred that is used only for something within the lab, such as a local password, then I'm comfortable storing it encrypted in GitHub. If it is something that can be used externally, it stays out of GitHub, is injected when needed, and is stored in 1Password.

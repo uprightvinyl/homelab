@@ -55,7 +55,18 @@ Handled by pihole on waddle for entire network.
 
 ## Internet Access
 
-Initially, Internet access is unavailable for any lab devices other than waddle (via wifi adapter) and bandee. Once the lab is sufficiently bootstrapped, internet access will be via an OPNSense VM.
+Internet access and outbound NAT for the lab are provided by coo, a Ubiquiti EdgeRouter. coo replaces the earlier plan to route internet access via an OPNsense VM, and the interim waddle wifi workaround. A dedicated hardware router at the edge is always on and independent of any hypervisor, so the lab's internet no longer depends on a compute node being up first. See docs/decisions.md for the reasoning.
+
+coo owns only the edge role (WAN and outbound NAT); bandee continues to handle inter-VLAN routing. While the lab is in transit, coo runs standalone — see Interim setup below.
+
+## Interim setup (lab in transit)
+
+While the rest of the lab is being shipped, coo is the only live network device, running standalone as the edge router for the new Nutanix host (Z4):
+
+- eth0 (WAN): DHCP client, plugged into the upstream Virgin router (double NAT; outbound only).
+- eth1 (LAN): 10.0.10.1/24, serving the management range with NAT, a DHCP pool (10.0.10.100–150) and a DNS forwarder (until waddle provides DNS).
+
+coo temporarily holds 10.0.10.1 — bandee's designated management and gateway address — because bandee is absent. The two are never live at the same time: when the lab returns, bandee reclaims 10.0.10.1 and coo is rebuilt as the edge NAT. This keeps the Nutanix host's gateway (10.0.10.1) constant across the move, so it needs no re-addressing — only its DNS entry moves from coo to waddle.
 
 ## Firewalling
 

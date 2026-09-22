@@ -1,5 +1,11 @@
 # uprightlab — Build History
 
+## September 2026
+
+### Tuesday 22nd
+
+- Built coo, a Ubiquiti EdgeRouter ERLite-3, as the lab's edge router, ahead of the rest of the lab arriving from shipping. In this interim standalone setup it provides internet access (NAT), DHCP and DNS on the management range for the new Nutanix host (Z4), which can therefore be built now with its final IP. coo will become the lab's permanent edge NAT, replacing the planned OPNsense VM and the waddle wifi workaround.
+
 ## July 2026
 
 ### Monday 13th July
