@@ -5,7 +5,7 @@
 | VLAN | Name | Subnet | Purpose |
 |------|------|--------|---------|
 | 4 | Home | `192.168.4.0/22` | Eero uplink, home devices, rick |
-| 10 | Management | `10.0.10.0/24` | Proxmox hosts, waddle, bandee |
+| 10 | Management | `10.0.10.0/24` | Proxmox and Nutanix hosts, waddle, bandee |
 | 20 | Kubernetes | `10.0.20.0/24` | K8s nodes and pod traffic |
 | 30 | Workloads | `10.0.30.0/24` | General purpose VMs |
 
@@ -17,6 +17,8 @@
 | waddle | 10 | `10.0.10.0/24` | `10.0.10.10` |
 | dede | 10 | `10.0.10.0/24` | `10.0.10.11` |
 | kirby | 10 | `10.0.10.0/24` | `10.0.10.12` |
+| nova01 (ahv) | 10 | `10.0.10.0/24` | `10.0.10.20` |
+| nova01 (cvm) | 10 | `10.0.10.0/24` | `10.0.10.21` |
 | meta | 20 | `10.0.20.0/24` | `10.0.20.10` |
 | rick | 4 | `192.168.4.0/22` | `192.168.4.20` |
 
@@ -28,7 +30,8 @@
 | gi2  | rick | 4 | Access |
 | gi3  | dede | 4, 10, 20, 30 | Trunk |
 | gi4  | kirby | 4, 10, 20, 30 | Trunk |
-| gi5-gi8 | Reserved for future compute hosts | - | - |
+| gi5  | nova01 | 4, 10, 20, 30 | Trunk |
+| gi6-gi8 | Reserved for future compute hosts | - | - |
 | gi9  | meta | 20 | Access |
 | gi26 | Eero uplink | 4 | Access |
 

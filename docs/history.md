@@ -1,5 +1,11 @@
 # uprightlab — Build History
 
+## October 2026
+
+### Tuesday 6th
+
+- Built nova01, the first node of the nova cluster — an HP Z4 G4 running Nutanix Community Edition (AOS 6.8.1 / AHV). Installed on the management range behind coo (host 10.0.10.20, CVM 10.0.10.21); booted successfully, with the gateway and internet reachable. Reserved the 10.0.10.20–39 block for the Nutanix cluster (node host/CVM pairs, Prism Element VIP, Prism Central and the data services IP).
+
 ## September 2026
 
 ### Tuesday 22nd

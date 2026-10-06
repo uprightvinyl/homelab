@@ -55,3 +55,11 @@
 - Storage: Onboard USB flash
 - Ports: 3 x Gigabit Ethernet (eth0 WAN, eth1 LAN, eth2 spare)
 - Features: hardware offload for line-rate NAT/routing
+
+### nova01 — HP Z4 G4
+- Hostname: nova01.lab.uprightlab.com
+- Role: Nutanix CE node (first node of the nova cluster)
+- CPU: Intel Xeon W-2140B @ 3.20GHz (8 cores, 16 threads)
+- RAM: 128GB ECC DDR4 (8 x 16GB Hynix 2133MHz RDIMM)
+- Storage: 500GB Crucial P1 M.2 2280 NVMe PCIe Gen3 x4 SSD (CT500P1SSD8, QLC, 100 TBW), 120GB Intel DC S3510 2.5" SATA SSD, 256GB Micron 1300 Series 2.5" SATA SSD
+- Network: Onboard Gigabit Ethernet
