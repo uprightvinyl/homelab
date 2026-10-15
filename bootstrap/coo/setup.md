@@ -94,3 +94,36 @@ With the WAN up on eth0, configure eth1 as the lab LAN and add the services. Man
     ```
 1. Plug a client (or the Z4) into **eth1** to test the LAN: it should pull a lease in 10.0.10.100–150, reach the router at 10.0.10.1, and route to the internet — `ping 1.1.1.1` (NAT), then `ping bbc.co.uk` (DNS).
 
+## Port forwarding (remote access)
+
+To reach lab hosts from the home network (behind coo) without being on the lab LAN, add destination-NAT rules on coo's WAN. These forward coo's WAN ports to hosts on 10.0.10.0/24 — currently the Nutanix node (nova01):
+
+- Prism Element: WAN `:9440` → cluster VIP `10.0.10.30:9440`
+- CVM SSH: WAN `:2221` → CVM `10.0.10.21:22` (port 2221 avoids clashing with coo's own SSH on 22)
+
+```
+configure
+set service nat rule 1 description "Prism Element"
+set service nat rule 1 type destination
+set service nat rule 1 inbound-interface eth0
+set service nat rule 1 protocol tcp
+set service nat rule 1 destination port 9440
+set service nat rule 1 inside-address address 10.0.10.30
+set service nat rule 1 inside-address port 9440
+set service nat rule 2 description "nova01 CVM SSH"
+set service nat rule 2 type destination
+set service nat rule 2 inbound-interface eth0
+set service nat rule 2 protocol tcp
+set service nat rule 2 destination port 2221
+set service nat rule 2 inside-address address 10.0.10.21
+set service nat rule 2 inside-address port 22
+commit
+save
+```
+
+From the home LAN, reach them at coo's reserved WAN address (192.168.0.253): Prism at `https://192.168.0.253:9440`, CVM shell via `ssh nutanix@192.168.0.253 -p 2221`.
+
+Notes:
+- Additional forwards (e.g. SSH to the AHV host at 10.0.10.20) follow the same pattern — pick a free rule number and a distinct external port.
+- coo's WAN firewall is not enabled in this interim setup, so no allow-rule is needed. Because coo sits behind the Virgin router's own NAT, these forwards are reachable only from the home network, not the public internet.
+

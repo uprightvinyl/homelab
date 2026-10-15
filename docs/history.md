@@ -2,6 +2,11 @@
 
 ## October 2026
 
+### Thursday 15th
+
+- Lab hardware arrived from the Australia→UK move. Reshuffled disks to resolve the Nutanix CVM failing to start — the Crucial P1 NVMe (Silicon Motion SM2263) can't be VFIO-passed to a CVM, so it moved to kirby for Proxmox use. nova01 was given a Samsung 970 EVO Plus 1TB (CVM/hot tier) and dede's 1TB MX500 (data), with the Intel S3510 as boot; dede's VM pool moved onto the 256GB Micron (renamed `mx500` → `vmdata`).
+- Reinstalled Nutanix CE successfully and created the single-node `nova` cluster; Prism Element is up on VIP 10.0.10.30. Set up remote access to Prism and the CVM via port-forwards on coo, changed all default Nutanix passwords (stored in 1Password), and brought the lab docs into line with the final build.
+
 ### Tuesday 6th
 
 - Built nova01, the first node of the nova cluster — an HP Z4 G4 running Nutanix Community Edition (AOS 6.8.1 / AHV). Installed on the management range behind coo (host 10.0.10.20, CVM 10.0.10.21); booted successfully, with the gateway and internet reachable. Reserved the 10.0.10.20–39 block for the Nutanix cluster (node host/CVM pairs, Prism Element VIP, Prism Central and the data services IP).

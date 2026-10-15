@@ -93,9 +93,11 @@ This uses Pi-hole's built-in NTP server (Pi-hole v6 / FTL includes one), so no e
 
 ### dede's second disk as a local VM storage pool
 
-dede has asymmetric storage: a 250 GB NVMe holding Proxmox and its default local-lvm, plus a 1 TB Crucial MX500 left unused after install. The MX500 is initialised as its own LVM thin pool (the `mx500` storage) for VM disks and container volumes, giving dede ~1 TB of node-local VM storage rather than the ~137 GB on the NVMe.
+dede runs Proxmox and its default local-lvm on a 250 GB Samsung 980 NVMe, with a second SSD initialised as its own LVM thin pool (the `vmdata` storage) for VM disks and container volumes, so VM storage is kept separate from the OS disk.
 
-This is consistent with the node-local-storage decision (VM disks on local storage, not the NAS). The disk initialisation is a one-off hardware-provisioning step documented in bootstrap/dede/setup.md rather than an idempotent playbook, since it runs once and can't be cleanly re-applied. kirby, with a single SSD, has no equivalent second pool.
+Originally this second disk was dede's 1 TB Crucial MX500. When the Nutanix node (nova01) needed a second ≥200 GB disk the CVM could use, the MX500 was moved there (see the NVMe passthrough decision below) and dede's second disk became the 256 GB Micron 1300 — a smaller pool, to be grown later if dede needs it. The pool was renamed `mx500` → `vmdata` at the same time so the name no longer ties to a specific disk.
+
+This is consistent with the node-local-storage decision (VM disks on local storage, not the NAS). The disk initialisation is a one-off hardware-provisioning step documented in bootstrap/dede/setup.md rather than an idempotent playbook, since it runs once and can't be cleanly re-applied.
 
 ### coo (EdgeRouter) as the lab's edge NAT
 
@@ -108,6 +110,12 @@ The management and gateway address 10.0.10.1 is kept constant across the relocat
 ### Home internet: Virgin in modem mode, Eero as the router
 
 When the lab and the Eero return, the upstream Virgin Hub 5 will be put into modem mode (a transparent bridge) with the Eero running as the primary router on 192.168.4.0/22. This keeps all of the Eero's functionality — bridging the Eero to an access point would lose it — while removing the Virgin's redundant NAT layer, so home devices are single-NATed and the lab (behind coo) is double-NATed rather than triple. coo's WAN then faces the Eero network. Because the lab NATs behind coo as a single 192.168.4.x host, the Eero never needs static routes to the 10.x lab subnets — which is what allows the original waddle wifi workaround to be retired.
+
+### Nutanix CVM disks must be passthrough-friendly (NVMe gotcha)
+
+A Nutanix node gives its CVM direct access to the storage disks by PCI passthrough (VFIO); only the AHV hypervisor boot disk is used by the host directly. The disk originally intended as nova01's CVM/hot tier — a Crucial P1 500 GB NVMe (Silicon Motion SM2263 controller) — could not be passed through: QEMU fails with "MSI-X table & pba overlap" and the CVM will not start. This is a known defect in that controller's MSI-X layout (kernel bug 202055), not something configurable in CE — the `x-msix-relocation` workaround lives in the auto-generated CVM libvirt XML and does not persist.
+
+The consequence for disk selection: on a Nutanix node, the CVM and data disks must each be ≥200 GB **and** passthrough-friendly — a Samsung/WD-controller NVMe, or a SATA SSD (which the CVM gets as a plain virtio disk, no passthrough). An NVMe that can't pass through can only serve as AHV boot. nova01's final layout is therefore Samsung 970 EVO Plus 1 TB (CVM), Intel DC S3510 120 GB (boot) and Crucial MX500 1 TB (data). The P1 was relocated to kirby, where Proxmox uses it directly (no passthrough) and it works fine — Proxmox is immune to this class of problem because it never passes disk controllers through to VMs for its own storage.
 
 ## Security
 

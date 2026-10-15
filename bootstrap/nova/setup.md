@@ -6,12 +6,13 @@ nova is the lab's Nutanix cluster, running Nutanix Community Edition (CE). Its f
 
 ## Prerequisites
 
-- Hardware (nova01): HP Z4 G4, 8-core Xeon with hyperthreading (16 threads), 128GB RAM.
-- Disks (all-flash) and their roles, as selected in the installer:
-    - 120GB Intel DC S3510 SATA SSD (`sda`) → AHV host boot
-    - 500GB Crucial P1 M.2 NVMe SSD (`nvme0n1`) → CVM home + SSD/hot tier
-    - 256GB Micron 1300 SATA SSD (`sdb`) → capacity
-  CE needs the CVM on an SSD of ~200GB or more (the NVMe qualifies) and a separate boot device (the 120GB).
+- Hardware (nova01): HP Z4 G4, 8-core Xeon with hyperthreading (16 threads), 128GB RAM. A Quadro P4000 is fitted for the CE install; an RTX 3060 12GB is planned for NAI (GPU passthrough), pending a dual 6-pin → 8-pin PCIe power adapter for the Z4's PSU.
+- Disks and their roles, as selected in the installer:
+    - 970 EVO Plus 1TB M.2 NVMe SSD → CVM home + SSD/hot tier
+    - 120GB Intel DC S3510 SATA SSD → AHV host boot
+    - 1TB Crucial MX500 SATA SSD → data
+  CE needs the CVM **and** data disks to each be ≥200GB and reachable by the CVM — see the passthrough note below, which dictated the disk choice.
+- **NVMe passthrough gotcha:** the CVM gets its storage disks by PCI passthrough (VFIO). The original Crucial P1 (Silicon Motion SM2263 controller) **cannot be passed through** — QEMU fails with "MSI-X table & pba overlap" and the CVM will not start. So an NVMe that can't pass through can only serve as AHV **boot** (the host uses it directly, no passthrough); CVM/data disks must be passthrough-friendly — a Samsung/WD-controller NVMe, or SATA SSDs (the CVM gets those as virtio, no passthrough). The P1 was moved to kirby, where Proxmox uses it directly and is unaffected. See docs/decisions.md.
 - A My Nutanix (Next) account — required to sign in to Prism on first login, and for CE licensing.
 - The CE installer image downloaded, and a USB stick to write it to.
 
@@ -23,8 +24,8 @@ Static addresses on the management range (10.0.10.0/24). The block is laid out t
     - nova01 — host **10.0.10.20**, CVM **10.0.10.21**
     - nova02–05 — host/CVM in `.22`/`.23` … `.28`/`.29`, assigned as nodes are added
 - **10.0.10.30** — cluster VIP (Prism Element)
-- **10.0.10.31** — Prism Central
-- **10.0.10.32** — iSCSI data services IP (for Nutanix Volumes / the NKP CSI driver)
+- **10.0.10.31** — iSCSI data services IP (for Nutanix Volumes / the NKP CSI driver)
+- **10.0.10.32** — Prism Central
 - **10.0.10.33–39** — reserved (Prism Central scale-out, NKP / NAI service IPs)
 
 Common settings:
@@ -32,7 +33,8 @@ Common settings:
 - Netmask: 255.255.255.0 (/24)
 - Gateway: 10.0.10.1 (coo)
 - DNS: 10.0.10.1 (interim; becomes waddle 10.0.10.10 when the lab returns)
-- Node hostname: nova01 (cluster name: nova)
+- Cluster name: **nova** (set with `ncli cluster edit-params new-name=nova`).
+- Node identity: CE does not let you set a host name, so the AHV host keeps its auto-generated name (`NTNX-1db48058-A`), and the CVM is `NTNX-1db48058-A-CVM` by design (the ID is regenerated on each reinstall). Renaming the host afterward is a gated KB procedure, so it was left as-is. **nova01** is the lab's name for the node, carried in DNS/docs (`nova01.lab.uprightlab.com` → `10.0.10.20`), not on the host itself.
 
 ## Write the installer USB (macOS)
 
@@ -54,18 +56,22 @@ Writing the CE image with `dd` produced a stick that would not boot on this hard
 ## Install Nutanix CE
 
 1. Boot from the USB stick (with all other disks wiped it should boot automatically, otherwise set it first in the boot order, or pick it from the F9 menu).
-1. Set the disk selection: **120GB SATA (`sda`)** as hypervisor boot, **500GB NVMe (`nvme0n1`)** as the CVM / SSD tier, **256GB SATA (`sdb`)** as capacity. The installer USB (`sdc`) stays unused.
-1. Enter the network details: Host IP **10.0.10.20**, CVM IP **10.0.10.21**, Netmask **255.255.255.0**, Gateway **10.0.10.1**. (CE 6.8.1 does not ask for a hostname here — that is set at cluster create / in Prism.)
+1. Set the disk selection: the **970 EVO Plus 1TB NVMe** as the CVM / SSD tier, the **120GB Intel SATA** as hypervisor boot, and the **1TB MX500 SATA** as the data disk. The installer USB stays unused.
+1. Enter the network details: Host IP **10.0.10.20**, CVM IP **10.0.10.21**, Netmask **255.255.255.0**, Gateway **10.0.10.1**.
 1. Hit Next.
-1. Scroll all the way to the bottom of EULA and then hit Start.
+1. Scroll all the way to the bottom of EULA and then hit Start (Tip: use the Page Down key).
 1. The install runs and reboots (allow ~30 minutes). Remove the USB once it has rebooted into AHV, if the USB was only the installer.
 
 ## Create / confirm the cluster
 
-1. SSH to the CVM: `ssh nutanix@10.0.10.21` (default password `nutanix/4u`).
-1. Check `cluster status`. If no cluster exists yet, create a single-node cluster: `cluster -s 10.0.10.21 create`.
+These steps follow Nutanix's CE Getting Started → Cluster Configuration (see References).
+
+1. Login at the console or SSH to the AHV host as root (default password `nutanix/4u`), then hop to the local CVM over the internal link: `ssh nutanix@192.168.5.2` (default password `nutanix/4u`). Once the cluster is up, the CVM is also reachable via ssh using the external IP (10.0.10.21)
+1. Create a single-node cluster: `cluster -s 10.0.10.21 --redundancy_factor=1 create`. Wait until all services report **UP**.
 1. Name the cluster **nova**: `ncli cluster edit-params new-name=nova` (or set it in Prism after first login).
-1. Set the cluster virtual (Prism) IP to **10.0.10.30** (and the data services IP, **10.0.10.32**, if prompted) — this can also be done in Prism after first login.
+1. Set coo as a local DNS server: `ncli cluster add-to-name-servers servers=10.0.10.1`
+1. Set the cluster virtual (Prism) IP to **10.0.10.30**: `ncli cluster set-external-ip-address external-ip-address=10.0.10.30`.
+1. Leave ntp servers, it is already set to use ntp.pool.org.
 
 ## Access Prism Element
 
@@ -75,25 +81,42 @@ Writing the CE image with `dd` produced a stick that would not boot on this hard
 
 ## Remote access
 
-Goal: reach Prism without being at the Z4 in the garden office. Options, quickest first:
-
 1. **On nova's own LAN** — a device on the eth2 wifi extender (bridged onto 10.0.10.0/24) reaches `https://10.0.10.30:9440` directly, no extra config.
-1. **From the home network** (behind coo) — add a destination-NAT on coo forwarding its WAN port 9440 to Prism:
+1. **From the home network** (behind coo) — coo port-forwards its WAN to Prism and the CVM; the DNAT rules live in bootstrap/coo/setup.md. With those in place, from the home LAN: Prism at `https://192.168.0.253:9440`, and the CVM shell via `ssh nutanix@192.168.0.253 -p 2221` (`192.168.0.253` is coo's reserved WAN address).
 
-    ```
-    configure
-    set service nat rule 1 description "Prism Element"
-    set service nat rule 1 type destination
-    set service nat rule 1 inbound-interface eth0
-    set service nat rule 1 protocol tcp
-    set service nat rule 1 destination port 9440
-    set service nat rule 1 inside-address address 10.0.10.30
-    set service nat rule 1 inside-address port 9440
-    commit
-    save
-    ```
-    Then browse to `https://192.168.0.237:9440` (coo's current WAN address) from the home LAN.
-1. **From anywhere** — run a tunnel (Tailscale, or a Cloudflare tunnel) on a small VM on the cluster once it is up. Do not expose Prism directly to the internet via a Virgin port-forward. This is a follow-on once there is a VM to host the tunnel.
+## Default Passwords
+
+Change every default credential to a strong, unique password and record each in 1Password. No password values go in this file — they are plaintext passwords, so they live in 1Password and are never committed to the repo.
+
+1. SSH to the CVM: `ssh nutanix@192.168.0.253 -p 2221`
+1. Update the nutanix user's password on the cvm: `sudo passwd nutanix`
+1. Update the admin user's password on the cvm: `sudo passwd admin`
+1. Update the AHV users:
+   1. `ssh root@10.0.10.20`
+   1. `passwd`
+   1. Change the password for the root user.
+   1. `passwd admin`
+   1. Change the password for the admin user.
+   1. `passwd nutanix`
+   1. Change the password for the nutanix user.
+
+## Prism Element
+
+1. Open PE
+1. Click the cog icon in the top left.
+1. Click Cluster Details and update the following:
+   1. Change the name to `nova`
+   1. Change the FQDN to `nova.lab.uprightlab.com`
+   1. Enter the iSCSI Data Services IP as `10.0.10.31`
+1. Open PE > LCM.
+1. Click **Perform Inventory**. When prompted, select **Enable Auto Inventory** and **Enable Auto Update for NCC**.
+1. Click Proceed.
+
+Once the Inventory has finished there will be updates to install. 
+
+1. Click Updates > Software.
+1. Select all updates and then click View Upgrade Plan.
+1. Click Next, then click Apply X Updates.
 
 ## Follow-on (to document as built)
 
@@ -101,3 +124,7 @@ Goal: reach Prism without being at the Z4 in the garden office. Options, quickes
 - NKP (Nutanix Kubernetes Platform).
 - NAI (Nutanix AI).
 - Joining the wider lab when it returns (re-point DNS to waddle; integrate with bandee/coo routing).
+
+## References
+
+- Nutanix Community Edition — Getting Started, Cluster Configuration: https://portal.nutanix.com/page/documents/details?targetId=Nutanix-Community-Edition-Getting-Started-v2_1:top-cluster-config-ce-t.html
