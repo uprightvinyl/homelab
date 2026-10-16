@@ -21,7 +21,7 @@ and repeatability over being the fastest or most production-hardened option.
 | bandee | Cisco SG350-28 | Core switch — VLANs and inter-VLAN routing |
 | waddle | Raspberry Pi 5 | DNS, DHCP and GitOps (Pi-hole, Semaphore) |
 | dede | Intel NUC 11 Pro | Proxmox node |
-| kirby | Custom PC (i7-6700K, GTX 980 Ti) | Proxmox node, GPU passthrough |
+| kirby | Custom PC (i7-6700K, Quadro P4000) | Proxmox node, GPU passthrough |
 | meta | Dell XPS 13 | Bare-metal Kubernetes control plane |
 | rick | QNAP TS-251 | Shared NFS storage |
 

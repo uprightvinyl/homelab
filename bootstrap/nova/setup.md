@@ -117,10 +117,44 @@ Once the Inventory has finished there will be updates to install.
 1. Click Updates > Software.
 1. Select all updates and then click View Upgrade Plan.
 1. Click Next, then click Apply X Updates.
+1. Repeat that process until no further updates are shown.
+1. Review the Nutanix portal for the latest updates of AOS and AHV. If these are not beeing shown by LCM, download the LCM bundles and upload those so the upgrade can complete at the latest versions of all software.
+
+## Prism Central deployment
+
+Launched from Prism Element (deploy Prism Central). **Small single-node** was chosen: Extra Small does not support the microservices platform (CMSP) that NKP and NAI depend on (see the XS-limitations reference below), and HA scale-out gives no real resilience on a single physical node.
+
+Step 1 — Version:
+
+1. Create PC Name: `pc`.
+1. Version: `pc.7.6.0.8` (latest compatible public version; "Only show compatible versions" ticked).
+
+Step 2 — Size and Scale:
+
+1. Size: **Small (S)** — 6 vCPU, 28 GB RAM, 500 GiB disk (supports up to 2500 VMs / 25 clusters / 200 hosts).
+1. Leave **Enable High Availability (HA)** unchecked — single-node.
+
+Step 3 — Configuration:
+
+1. Network: **`vlan10-mgmt`** (the untagged VLAN 10 subnet).
+1. Subnet Mask `255.255.255.0`, Gateway `10.0.10.1` (coo).
+1. DNS `10.0.10.1` (coo — interim; becomes waddle `10.0.10.10` when the lab returns).
+1. NTP `pool.ntp.org` (interim; repoint to waddle once it is up).
+1. Container: the cluster's default storage container (`default-container-…`).
+1. IP Address: **`10.0.10.32`**.
+1. Internal Network Configuration: left collapsed / at defaults — this relates to PC's internal (microservices) network; revisit when enabling CMSP for NKP/NAI.
+1. Click **Deploy** and wait for PC to come up at `https://10.0.10.32:9440`.
+
+After deployment:
+
+- Change PC's default `admin` password and store it in 1Password.
+- Remote access from home needs its own coo port-forward — PC is a separate service on `10.0.10.32:9440`, distinct from the PE VIP `.30` forward. Add a rule following bootstrap/coo/setup.md (e.g. WAN `:9441` → `10.0.10.32:9440`).
+- Before NKP/NAI, enable CMSP (microservices), which needs its own reserved IP block — see the `.33–.39` reservation in the Network section.
+
+Reference — Extra Small PC limitations: https://portal.nutanix.com/page/documents/details?targetId=Prism-Central-Guide-vpc_7_6:mul-xs-pc-c.html
 
 ## Follow-on (to document as built)
 
-- Prism Central deployment.
 - NKP (Nutanix Kubernetes Platform).
 - NAI (Nutanix AI).
 - Joining the wider lab when it returns (re-point DNS to waddle; integrate with bandee/coo routing).

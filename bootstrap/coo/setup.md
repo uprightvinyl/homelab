@@ -96,10 +96,12 @@ With the WAN up on eth0, configure eth1 as the lab LAN and add the services. Man
 
 ## Port forwarding (remote access)
 
-To reach lab hosts from the home network (behind coo) without being on the lab LAN, add destination-NAT rules on coo's WAN. These forward coo's WAN ports to hosts on 10.0.10.0/24 — currently the Nutanix node (nova01):
+To reach lab hosts from the home network (behind coo) without being on the lab LAN, add destination-NAT rules on coo's WAN. These forward coo's WAN ports to hosts on 10.0.10.0/24 — the Nutanix node (nova01) and Prism Central:
 
 - Prism Element: WAN `:9440` → cluster VIP `10.0.10.30:9440`
-- CVM SSH: WAN `:2221` → CVM `10.0.10.21:22` (port 2221 avoids clashing with coo's own SSH on 22)
+- CVM SSH: WAN `:2221` → CVM `10.0.10.21:22` (2221 avoids clashing with coo's own SSH on 22)
+- AHV host SSH: WAN `:2220` → AHV host `10.0.10.20:22`
+- Prism Central: WAN `:9441` → PC `10.0.10.32:9440`
 
 ```
 configure
@@ -117,13 +119,32 @@ set service nat rule 2 protocol tcp
 set service nat rule 2 destination port 2221
 set service nat rule 2 inside-address address 10.0.10.21
 set service nat rule 2 inside-address port 22
+set service nat rule 3 description "nova01 AHV SSH"
+set service nat rule 3 type destination
+set service nat rule 3 inbound-interface eth0
+set service nat rule 3 protocol tcp
+set service nat rule 3 destination port 2220
+set service nat rule 3 inside-address address 10.0.10.20
+set service nat rule 3 inside-address port 22
+set service nat rule 4 description "Prism Central"
+set service nat rule 4 type destination
+set service nat rule 4 inbound-interface eth0
+set service nat rule 4 protocol tcp
+set service nat rule 4 destination port 9441
+set service nat rule 4 inside-address address 10.0.10.32
+set service nat rule 4 inside-address port 9440
 commit
 save
 ```
 
-From the home LAN, reach them at coo's reserved WAN address (192.168.0.253): Prism at `https://192.168.0.253:9440`, CVM shell via `ssh nutanix@192.168.0.253 -p 2221`.
+From the home LAN, reach them at coo's reserved WAN address (192.168.0.253):
+
+- Prism Element: `https://192.168.0.253:9440`
+- Prism Central: `https://192.168.0.253:9441`
+- CVM shell: `ssh nutanix@192.168.0.253 -p 2221`
+- AHV host shell: `ssh root@192.168.0.253 -p 2220`
 
 Notes:
-- Additional forwards (e.g. SSH to the AHV host at 10.0.10.20) follow the same pattern — pick a free rule number and a distinct external port.
+- Each new forward needs a free rule number and a distinct external port; the inside port is the service's real port.
 - coo's WAN firewall is not enabled in this interim setup, so no allow-rule is needed. Because coo sits behind the Virgin router's own NAT, these forwards are reachable only from the home network, not the public internet.
 

@@ -23,7 +23,7 @@
 - Motherboard: ASUS Z170-Deluxe
 - RAM: 32GB (4 x 8GB) Corsair DDR4 2133MHz
 - Storage: 500GB Crucial BX100 SATA SSD, 500GB Crucial P1 M.2 NVMe SSD (CT500P1SSD8)
-- GPU: GeForce RTX™ 3060 VENTUS 2X 12GB (PCIe passthrough)
+- GPU: NVIDIA Quadro P4000 8GB
 
 ### rick — QNAP TS-251
 - Hostname: rick.lab.uprightlab.com
@@ -64,3 +64,4 @@
 - RAM: 128GB ECC DDR4 (8 x 16GB Hynix 2133MHz RDIMM)
 - Storage: 1TB Samsung 970 EVO Plus M.2 NVMe (MZ-V7S1T0), 120GB Intel DC S3510 2.5" SATA SSD, 1TB Crucial MX500 2.5" SATA SSD
 - Network: Onboard Gigabit Ethernet
+- GPU: GeForce RTX™ 3060 VENTUS 2X 12GB (PCIe passthrough for NAI)
