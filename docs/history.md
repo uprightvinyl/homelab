@@ -1,6 +1,19 @@
 # uprightlab — Build History
 
+## November 2026
+
+### Tuesday 3rd
+
+- Tidied bandee's switch ports now the lab is reassembled: nova01 settled on the gi3 trunk (native VLAN 10); gi4 cleared and shut down, freed from the retired kirby and reserved for dede's eventual return; and gi25 added as a VLAN 10 access port for coo's LAN side. Applied the change via Semaphore and verified each port on the switch.
+- Connected coo's WAN (eth0) to the spare powerline port on the Eero segment, with a reserved static lease (192.168.4.253), and confirmed it is reachable — the first step of rebuilding coo as the lab's permanent edge NAT. The LAN side (eth1 → gi25) and the NAT/routing cutover follow next.
+- Retired kirby from the lab, to be repurposed as a sim-racing PC (it keeps its Quadro P4000; the Crucial P1 NVMe may later be reclaimed for dede). Moved its entry to a new Retired section in the hardware inventory.
+
 ## October 2026
+
+### 27th October – 2nd November
+
+- Brought the lab's home network back up after the Australia → UK move: set up the newly-arrived Eero mesh and switched the Virgin Hub into modem mode, so the Eero is the sole router and a layer of NAT is removed.
+- Reconnected and powered up the lab hardware — bandee, waddle, rick and nova01 are plugged in and running. Verified connectivity: SSH to bandee, HTTPS to rick, and from bandee reached nova01 and waddle by ping.
 
 ### Thursday 15th
 

@@ -16,15 +16,6 @@
 - Storage: 250GB Samsung 980 NVMe, 256GB Micron 1300 Series 2.5" SATA SSD
 - Network: Intel i225-LM 2.5GbE, Wi-Fi 6
 
-### kirby — kerbside PC
-- Hostname: kirby.lab.uprightlab.com
-- Role: Proxmox node
-- CPU: Intel Core i7-6700K
-- Motherboard: ASUS Z170-Deluxe
-- RAM: 32GB (4 x 8GB) Corsair DDR4 2133MHz
-- Storage: 500GB Crucial BX100 SATA SSD, 500GB Crucial P1 M.2 NVMe SSD (CT500P1SSD8)
-- GPU: NVIDIA Quadro P4000 8GB
-
 ### rick — QNAP TS-251
 - Hostname: rick.lab.uprightlab.com
 - Role: shared storage, NFS exports
@@ -65,3 +56,15 @@
 - Storage: 1TB Samsung 970 EVO Plus M.2 NVMe (MZ-V7S1T0), 120GB Intel DC S3510 2.5" SATA SSD, 1TB Crucial MX500 2.5" SATA SSD
 - Network: Onboard Gigabit Ethernet
 - GPU: GeForce RTX™ 3060 VENTUS 2X 12GB (PCIe passthrough for NAI)
+
+## Retired
+
+### kirby — kerbside PC
+- Retired: repurposed as a sim-racing PC (retains the Quadro P4000).
+- Hostname: kirby.lab.uprightlab.com
+- Role: Proxmox node
+- CPU: Intel Core i7-6700K
+- Motherboard: ASUS Z170-Deluxe
+- RAM: 32GB (4 x 8GB) Corsair DDR4 2133MHz
+- Storage: 500GB Crucial BX100 SATA SSD, 500GB Crucial P1 M.2 NVMe SSD (CT500P1SSD8)
+- GPU: NVIDIA Quadro P4000 8GB
