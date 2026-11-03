@@ -10,7 +10,8 @@ svis:
 access_ports:
   - { port: gi2, vlan: 4 }    # rick
   - { port: gi9, vlan: 20 }   # meta
+  - { port: gi25, vlan: 10 }  # coo (LAN / edge NAT uplink)
 
 trunk_ports:
-  - { port: gi3, native: 10 }   # dede
-  - { port: gi4, native: 10 }   # kirby
+  - { port: gi3, native: 10 }   # nova01
+  # gi4 reserved for dede when re-added (was kirby)

@@ -15,8 +15,7 @@
 |------|------|--------|----|
 | bandee (management) | 10 | `10.0.10.0/24` | `10.0.10.1` |
 | waddle | 10 | `10.0.10.0/24` | `10.0.10.10` |
-| dede | 10 | `10.0.10.0/24` | `10.0.10.11` |
-| kirby | 10 | `10.0.10.0/24` | `10.0.10.12` |
+| dede (to be re-added) | 10 | `10.0.10.0/24` | `10.0.10.11` |
 | nova01 (ahv) — `NTNX-1db48058-A` | 10 | `10.0.10.0/24` | `10.0.10.20` |
 | nova01 (cvm) — `NTNX-1db48058-A-CVM` | 10 | `10.0.10.0/24` | `10.0.10.21` |
 | meta | 20 | `10.0.20.0/24` | `10.0.20.10` |
@@ -28,11 +27,11 @@
 |------|------|------|------|
 | gi1  | waddle | 10 | Access |
 | gi2  | rick | 4 | Access |
-| gi3  | dede | 4, 10, 20, 30 | Trunk |
-| gi4  | kirby | 4, 10, 20, 30 | Trunk |
-| gi5  | nova01 | 4, 10, 20, 30 | Trunk |
-| gi6-gi8 | Reserved for future compute hosts | - | - |
+| gi3  | nova01 | 4, 10, 20, 30 | Trunk |
+| gi4  | Reserved (dede, re-add later) | - | - |
+| gi5-gi8 | Reserved for future compute hosts | - | - |
 | gi9  | meta | 20 | Access |
+| gi25 | coo (LAN / edge NAT uplink) | 10 | Access |
 | gi26 | Eero uplink | 4 | Access |
 
 ## Routing
