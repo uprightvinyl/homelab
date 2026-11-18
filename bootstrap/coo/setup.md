@@ -102,7 +102,7 @@ Everything else on coo is managed by `ansible/playbooks/coo.yaml`, using `commun
 
 The playbook needs `community.network`, which is no longer part of the `ansible` package. Semaphore installs it from `ansible/playbooks/collections/requirements.yml`; on the workstation, it is in `ansible/requirements.yaml`.
 
-1. Add a Semaphore task template following bootstrap/semaphore/setup.md: name **Configure coo**, path `ansible/playbooks/coo.yaml`, the uprightlab inventory, the ed25519 service key, and the Ansible Vault Password.
+1. Add a Semaphore task template following bootstrap/semaphore/setup.md: name **Configure coo**, path `ansible/playbooks/coo.yaml`, the **uprightlab** inventory (which carries the ed25519 service key — not uprightlab-rsa, which is for bandee), and the Ansible Vault Password.
 1. Run it with `--check --diff` first to preview the changes (edgeos_config supports check mode), then run it for real.
 1. Check offload on coo with `show ubnt offload`, and reboot if it does not show as enabled.
 

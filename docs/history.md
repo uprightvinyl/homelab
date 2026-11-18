@@ -2,6 +2,11 @@
 
 ## November 2026
 
+### Wednesday 18th
+
+- Rebuilt coo as the lab's permanent edge NAT. Removed the interim bridge, DHCP pool, DNS forwarder and port forwards, moved eth1 to 10.0.10.2 on bandee gi25, and pointed bandee's default route at coo. The lab now has outbound internet without relying on waddle's wifi workaround. Remote access is via the Cloudflare Tunnel and WARP, with a jump box planned as a break-glass.
+- Brought coo under Ansible. After testing both against coo, `community.network.edgeos_config` was chosen over `vyos.vyos` — the VyOS modules hang on the EdgeOS pager — and pinned at 5.1.0, its final release. The new coo playbook manages the lab route, outbound NAT, NTP, time zone, domain and hardware offload; the first run committed and saved cleanly, a second run made no changes, and the Configure coo template now runs the same way from Semaphore.
+
 ### Tuesday 3rd
 
 - Tidied bandee's switch ports now the lab is reassembled: nova01 settled on the gi3 trunk (native VLAN 10); gi4 cleared and shut down, freed from the retired kirby and reserved for dede's eventual return; and gi25 added as a VLAN 10 access port for coo's LAN side. Applied the change via Semaphore and verified each port on the switch.
