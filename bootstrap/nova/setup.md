@@ -81,14 +81,13 @@ These steps follow Nutanix's CE Getting Started → Cluster Configuration (see R
 
 ## Remote access
 
-1. **On nova's own LAN** — a device on the eth2 wifi extender (bridged onto 10.0.10.0/24) reaches `https://10.0.10.30:9440` directly, no extra config.
-1. **From the home network** (behind coo) — coo port-forwards its WAN to Prism and the CVM; the DNAT rules live in bootstrap/coo/setup.md. With those in place, from the home LAN: Prism at `https://192.168.0.253:9440`, and the CVM shell via `ssh nutanix@192.168.0.253 -p 2221` (`192.168.0.253` is coo's reserved WAN address).
+Remote access is via the Cloudflare Tunnel and WARP (see cloudflare/setup.md), which route 10.0.10.0/24 to the lab. With WARP connected, reach Prism Element at `https://10.0.10.30:9440`, Prism Central at `https://10.0.10.32:9440`, and the CVM shell via `ssh nutanix@10.0.10.21`.
 
 ## Default Passwords
 
 Change every default credential to a strong, unique password and record each in 1Password. No password values go in this file — they are plaintext passwords, so they live in 1Password and are never committed to the repo.
 
-1. SSH to the CVM: `ssh nutanix@192.168.0.253 -p 2221`
+1. SSH to the CVM: `ssh nutanix@10.0.10.21`
 1. Update the nutanix user's password on the cvm: `sudo passwd nutanix`
 1. Update the admin user's password on the cvm: `sudo passwd admin`
 1. Update the AHV users:
@@ -148,7 +147,6 @@ Step 3 — Configuration:
 After deployment:
 
 - Change PC's default `admin` password and store it in 1Password.
-- Remote access from home needs its own coo port-forward — PC is a separate service on `10.0.10.32:9440`, distinct from the PE VIP `.30` forward. Add a rule following bootstrap/coo/setup.md (e.g. WAN `:9441` → `10.0.10.32:9440`).
 - Before NKP/NAI, enable CMSP (microservices), which needs its own reserved IP block — see the `.33–.39` reservation in the Network section.
 
 Reference — Extra Small PC limitations: https://portal.nutanix.com/page/documents/details?targetId=Prism-Central-Guide-vpc_7_6:mul-xs-pc-c.html

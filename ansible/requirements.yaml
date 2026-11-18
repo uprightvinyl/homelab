@@ -2,3 +2,5 @@ collections:
   - name: community.docker
   - name: community.ciscosmb
   - name: community.proxmox
+  - name: community.network   # coo; frozen at its final release
+    version: 5.1.0

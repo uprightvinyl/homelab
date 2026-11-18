@@ -2,27 +2,28 @@
 
 This file documents the manual steps to build coo, the EdgeRouter, prior to managing it as code.
 
-coo is a Ubiquiti EdgeRouter ERLite-3. In this first phase — while the rest of the lab is in transit — it acts as a standalone edge router and NAT gateway. It gives the new Nutanix host (on the Z4) internet access and an IP on the lab's management range (10.0.10.0/24), so the host does not need re-addressing when the lab arrives.
-
-When the lab returns, coo will be rebuilt as the lab's permanent edge NAT — sitting between bandee and the Eero, retiring the OPNsense VM and the waddle wifi workaround. That rebuild is a separate exercise and is not covered here yet. See docs/decisions.md for the reasoning.
+coo is a Ubiquiti EdgeRouter ERLite-3 and is the lab's edge NAT gateway. It sits between bandee (on the management VLAN) and the Eero home network, giving every lab VLAN outbound internet access via NAT. bandee keeps inter-VLAN routing and sends only its default route to coo. DHCP and DNS for the lab are provided by waddle, not coo. See docs/decisions.md for the reasoning.
 
 ## Port roles
 
-- **eth0** — WAN. DHCP client, plugged into the upstream Virgin router.
-- **eth1** — LAN. Static 10.0.10.1/24, serving the lab side (the Z4 for now).
-- **eth2** — spare LAN port.
+- **eth0** — WAN. DHCP client on the Eero home network (192.168.4.0/22), connected via the spare port on the lab-end powerline adapter. The Eero reserves 192.168.4.253 for it.
+- **eth1** — LAN. Static 10.0.10.2/24, connected to bandee gi25 (VLAN 10 access port).
+- **eth2** — spare, unconfigured.
 
-Note: the ERLite-3's ports are independent routed interfaces by default, so eth1 connects straight to the Z4 with no switch in between.
+## Prerequisites
+
+- bandee gi25 is configured as a VLAN 10 access port. This is managed by the bandee playbook (`ansible/inventory/host_vars/bandee/vars.yaml`).
+- bandee holds 10.0.10.1 on VLAN 10, and its default route points at coo once coo is built — see [Point bandee at coo](#point-bandee-at-coo).
 
 ## First time UI setup
 
-1. Connect eth1 to the Virgin Router. The factory default is for eth1 to be configured for DHCP.
-1. Connect to the Virgin router (`https://192.168.0.1`) and find the DHCP address given to the ERlite.
-1. Browse to `https://192.168.0.xxx` and log in with the default credentials `ubnt` / `ubnt`.
-1. Check the version on the dashboard. If it is an old EdgeOS 1.x, upgrade to the latest EdgeOS 2.x **e100 / EdgeMAX Lite** image (System > Upgrade, or `add system image <url>`).
+1. Connect eth1 to the home network (e.g. the spare powerline port). The factory default is for eth1 to be configured for DHCP.
+1. Find the DHCP address given to the ERLite in the Eero app.
+1. Browse to `https://192.168.4.xxx` and log in with the default credentials `ubnt` / `ubnt`.
+1. Check the version on the dashboard and upgrade to the latest EdgeOS **e100 / EdgeMAX Lite** image (System > Upgrade, or `add system image <url>`). coo runs EdgeOS v3.0.1.
 1. Reboot if prompted.
-1. SSH to the host (```ssh ubnt@192.168.0.x```), then set the hostname and create a **chris** admin user with an SSH key and a real password, and store the password in 1Password. Note, for the ssh key, just the key, remove comments.
-    
+1. SSH to the host (```ssh ubnt@192.168.4.xxx```), then set the hostname and create a **chris** admin user with an SSH key and a real password, and store the password in 1Password.
+
     ```
     configure
     set system host-name coo
@@ -34,7 +35,7 @@ Note: the ERLite-3's ports are independent routed interfaces by default, so eth1
     save
     ```
     Note: use the same ed25519 public key as the other lab hosts. Paste only the key material — no `ssh-ed25519` prefix and no trailing comment.
-1. Log back in as **chris**, then remove or disable the default **ubnt** user.
+1. Log back in as **chris**, then remove the default **ubnt** user.
 
     ```
     configure
@@ -43,7 +44,7 @@ Note: the ERLite-3's ports are independent routed interfaces by default, so eth1
     save
     ```
 
-1. Reconfigure **eth0** as a DHCP client — this becomes the permanent WAN port. Once this change is made, connectivity will be lost.
+1. Reconfigure **eth0** as a DHCP client — this becomes the permanent WAN port. You are still connected via eth1, so the session stays up.
 
     ```
     configure
@@ -53,98 +54,83 @@ Note: the ERLite-3's ports are independent routed interfaces by default, so eth1
     save
     ```
 
-1. Move the uplink cable from eth1 to **eth0**. Management continues over eth0, which still sits inside the private network behind the Virgin router.
+1. Move the cable from eth1 to **eth0**. This drops the session; eth0 picks up its own lease from the Eero.
+1. In the Eero app, add a DHCP reservation of **192.168.4.253** for coo's eth0, then reboot coo (or renew the lease) so it picks up the reserved address. Management continues over eth0 at `192.168.4.253`.
 
-## Interfaces, NAT and services
+## LAN interface, outbound NAT and Semaphore user
 
-With the WAN up on eth0, configure eth1 as the lab LAN and add the services. Management stays on the eth0 (WAN) side for now, which is inside the private network behind the Virgin router.
+With the WAN up on eth0, set up what Ansible needs to reach and run against coo: the LAN address, outbound NAT and a service user.
 
-1. Configure the LAN interface:
+- The interface addresses stay manual because they are how Ansible connects — a bad push to them could cut Semaphore off mid-run.
+- Outbound NAT is also set here, even though the playbook manages it too. Semaphore needs internet access to pull this repository and install collections, and the lab only has internet once coo is masquerading. Setting it by hand means rebuilding coo doesn't depend on waddle's wifi workaround; the playbook then adopts the rule on its first run.
+
+1. Configure the LAN interface and outbound NAT, and create the **semaphore** user with the Semaphore ed25519 public key (`ansible/files/semaphore_service_key.pub`, key material only):
 
     ```
     configure
     delete interfaces ethernet eth1 address dhcp
-    set interfaces ethernet eth1 address 10.0.10.1/24
+    set interfaces ethernet eth1 address 10.0.10.2/24
     set interfaces ethernet eth1 description LAN
-    ```
-1. Add outbound NAT (masquerade on the WAN):
-
-    ```
-    set service nat rule 5000 description "masquerade to WAN"
+    set service nat rule 5000 description 'masquerade to WAN'
     set service nat rule 5000 outbound-interface eth0
     set service nat rule 5000 type masquerade
-    ```
-1. Add a DNS forwarder for the LAN, used until waddle provides DNS:
-
-    ```
-    set service dns forwarding listen-on eth1
-    set service dns forwarding name-server 1.1.1.1
-    set service dns forwarding name-server 1.0.0.1
-    set service dns forwarding cache-size 150
-    ```
-1. Add a small DHCP pool for convenience, leaving .1, .10 and .20–.29 free for statics:
-
-    ```
-    set service dhcp-server shared-network-name LAN subnet 10.0.10.0/24 default-router 10.0.10.1
-    set service dhcp-server shared-network-name LAN subnet 10.0.10.0/24 dns-server 10.0.10.1
-    set service dhcp-server shared-network-name LAN subnet 10.0.10.0/24 domain-name lab.uprightlab.com
-    set service dhcp-server shared-network-name LAN subnet 10.0.10.0/24 start 10.0.10.100 stop 10.0.10.150
+    set system login user semaphore level admin
+    set system login user semaphore authentication plaintext-password <random password>
+    set system login user semaphore authentication public-keys semaphore type ssh-ed25519
+    set system login user semaphore authentication public-keys semaphore key <ed25519 key material>
     commit
     save
+    exit
     ```
-1. Plug a client (or the Z4) into **eth1** to test the LAN: it should pull a lease in 10.0.10.100–150, reach the router at 10.0.10.1, and route to the internet — `ping 1.1.1.1` (NAT), then `ping bbc.co.uk` (DNS).
+    Note: `level admin` is needed to enter configuration mode. EdgeOS requires a password on every user, even one that logs in with a key, so generate a long random one and store it in 1Password.
+1. Connect eth1 to bandee **gi25**.
+1. Create the vaulted host vars for coo, holding the service user's name:
 
-## Port forwarding (remote access)
+    ```
+    ansible-vault create ansible/inventory/host_vars/coo/secrets.yaml
+    ```
+    Content: `vault_coo_semaphore_user: semaphore`
 
-To reach lab hosts from the home network (behind coo) without being on the lab LAN, add destination-NAT rules on coo's WAN. These forward coo's WAN ports to hosts on 10.0.10.0/24 — the Nutanix node (nova01) and Prism Central:
+## Remaining configuration (Ansible)
 
-- Prism Element: WAN `:9440` → cluster VIP `10.0.10.30:9440`
-- CVM SSH: WAN `:2221` → CVM `10.0.10.21:22` (2221 avoids clashing with coo's own SSH on 22)
-- AHV host SSH: WAN `:2220` → AHV host `10.0.10.20:22`
-- Prism Central: WAN `:9441` → PC `10.0.10.32:9440`
+Everything else on coo is managed by `ansible/playbooks/coo.yaml`, using `community.network.edgeos_config`:
+
+- A static route for the lab networks (10.0.0.0/16) via bandee. coo is directly connected only to VLAN 10, so without it, replies to VLAN 20 and 30 would leave via the WAN.
+- Outbound NAT (masquerade on the WAN), adopted from the bootstrap.
+- NTP from waddle, the Europe/London time zone and the lab domain.
+- Hardware offload. The ERLite-3 is a Cavium platform, so it uses `ipv4 forwarding` (`hwnat` is for the ER-X). Without offload, routing runs on the CPU at roughly 300 Mbps.
+
+The playbook needs `community.network`, which is no longer part of the `ansible` package. Semaphore installs it from `ansible/playbooks/collections/requirements.yml`; on the workstation, it is in `ansible/requirements.yaml`.
+
+1. Add a Semaphore task template following bootstrap/semaphore/setup.md: name **Configure coo**, path `ansible/playbooks/coo.yaml`, the uprightlab inventory, the ed25519 service key, and the Ansible Vault Password.
+1. Run it with `--check --diff` first to preview the changes (edgeos_config supports check mode), then run it for real.
+1. Check offload on coo with `show ubnt offload`, and reboot if it does not show as enabled.
+
+## Point bandee at coo
+
+bandee routes between the lab VLANs and sends everything else to coo. On bandee:
 
 ```
-configure
-set service nat rule 1 description "Prism Element"
-set service nat rule 1 type destination
-set service nat rule 1 inbound-interface eth0
-set service nat rule 1 protocol tcp
-set service nat rule 1 destination port 9440
-set service nat rule 1 inside-address address 10.0.10.30
-set service nat rule 1 inside-address port 9440
-set service nat rule 2 description "nova01 CVM SSH"
-set service nat rule 2 type destination
-set service nat rule 2 inbound-interface eth0
-set service nat rule 2 protocol tcp
-set service nat rule 2 destination port 2221
-set service nat rule 2 inside-address address 10.0.10.21
-set service nat rule 2 inside-address port 22
-set service nat rule 3 description "nova01 AHV SSH"
-set service nat rule 3 type destination
-set service nat rule 3 inbound-interface eth0
-set service nat rule 3 protocol tcp
-set service nat rule 3 destination port 2220
-set service nat rule 3 inside-address address 10.0.10.20
-set service nat rule 3 inside-address port 22
-set service nat rule 4 description "Prism Central"
-set service nat rule 4 type destination
-set service nat rule 4 inbound-interface eth0
-set service nat rule 4 protocol tcp
-set service nat rule 4 destination port 9441
-set service nat rule 4 inside-address address 10.0.10.32
-set service nat rule 4 inside-address port 9440
-commit
-save
+configure terminal
+no ip route 0.0.0.0 0.0.0.0 192.168.4.1
+ip route 0.0.0.0 0.0.0.0 10.0.10.2
+end
+copy running-config startup-config
 ```
 
-From the home LAN, reach them at coo's reserved WAN address (192.168.0.253):
+## Remote access
 
-- Prism Element: `https://192.168.0.253:9440`
-- Prism Central: `https://192.168.0.253:9441`
-- CVM shell: `ssh nutanix@192.168.0.253 -p 2221`
-- AHV host shell: `ssh root@192.168.0.253 -p 2220`
+coo has no port forwards. Remote access to the lab is via the Cloudflare Tunnel and WARP (see cloudflare/setup.md), which route 10.0.10.0/24 to lab hosts at their real addresses.
 
-Notes:
-- Each new forward needs a free rule number and a distinct external port; the inside port is the service's real port.
-- coo's WAN firewall is not enabled in this interim setup, so no allow-rule is needed. Because coo sits behind the Virgin router's own NAT, these forwards are reachable only from the home network, not the public internet.
+A jump box is planned as a break-glass for when the tunnel is unavailable. When it is built, it will get a single destination-NAT rule on coo's WAN, plus a masquerade rule scoped to the jump box so its replies return via coo rather than directly from bandee.
 
+coo's WAN firewall is not enabled. coo sits behind the Eero's own NAT, so its WAN is reachable only from the home network, not the public internet.
+
+## Testing
+
+| From | Command | Shows |
+|------|---------|-------|
+| coo | `ping 10.0.10.1`, `ping 10.0.10.10` | LAN side is up |
+| coo | `ping 10.0.20.10` | Static route to VLAN 20 via bandee works |
+| bandee | `show ip route` | Default route is via `10.0.10.2` |
+| waddle or the nova01 CVM | `ping 1.1.1.1`, then `ping bbc.co.uk` | Outbound NAT and DNS work |

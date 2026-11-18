@@ -1,0 +1,48 @@
+---
+# Lines must match `show configuration commands` exactly (including quotes)
+# for edgeos_config to treat them as already present.
+- name: Configure coo edge router
+  hosts: coo
+  gather_facts: false
+  tasks:
+    - name: Route lab networks back via bandee
+      community.network.edgeos_config:
+        lines:
+          - set protocols static route 10.0.0.0/16 next-hop 10.0.10.1 description 'lab via bandee'
+      notify: Save config
+
+    - name: Masquerade outbound traffic to the WAN
+      community.network.edgeos_config:
+        lines:
+          - set service nat rule 5000 description 'masquerade to WAN'
+          - set service nat rule 5000 outbound-interface eth0
+          - set service nat rule 5000 type masquerade
+      notify: Save config
+
+    - name: Use waddle for time
+      community.network.edgeos_config:
+        lines:
+          - delete system ntp server 0.ubnt.pool.ntp.org   # factory defaults
+          - delete system ntp server 1.ubnt.pool.ntp.org
+          - delete system ntp server 2.ubnt.pool.ntp.org
+          - delete system ntp server 3.ubnt.pool.ntp.org
+          - set system ntp server 10.0.10.10
+          - set system time-zone Europe/London
+      notify: Save config
+
+    - name: Set the lab domain
+      community.network.edgeos_config:
+        lines:
+          - set system domain-name lab.uprightlab.com
+      notify: Save config
+
+    - name: Enable hardware offload (Cavium uses ipv4 forwarding, not hwnat)
+      community.network.edgeos_config:
+        lines:
+          - set system offload ipv4 forwarding enable
+      notify: Save config
+
+  handlers:
+    - name: Save config
+      community.network.edgeos_config:
+        save: true

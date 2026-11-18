@@ -1,0 +1,6 @@
+# Semaphore installs collections from this path before each run. Everything
+# else the playbooks use ships in the ansible package; community.network was
+# removed from it at Ansible 12, so it is pinned here at its final release.
+collections:
+  - name: community.network
+    version: 5.1.0
