@@ -105,6 +105,22 @@
       changed_when: true
       notify: Save running config
 
+    - name: Read default gateway
+      community.ciscosmb.command:
+        commands: show running-config | include default-gateway
+      register: gateway_state
+      changed_when: false
+
+    - name: Ensure default gateway points at coo
+      community.ciscosmb.command:
+        commands:
+          - configure terminal
+          - "ip default-gateway {{ default_gateway }}"
+          - end
+      when: "('ip default-gateway ' ~ default_gateway) not in gateway_state.stdout[0]"
+      changed_when: true
+      notify: Save running config
+
   handlers:
     - name: Save running config
       community.ciscosmb.command:

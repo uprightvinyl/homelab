@@ -66,13 +66,15 @@ The following steps will complete the remaining manual configuration of the swit
     ip address 10.0.10.1 255.255.255.0
     exit
     ip routing
-    ip route 0.0.0.0 0.0.0.0 192.168.4.1
+    ip default-gateway 10.0.10.2
     interface gi1
     switchport mode access
     switchport access vlan 10
     exit
     exit
     ```
+
+    Note: the default route points at coo (10.0.10.2), which provides the lab's internet access. It is set here as well as in the bandee playbook because Semaphore needs internet access to run; until coo is built, the lab has no internet unless waddle's wifi workaround is in place. The SG350 stores a default route as `ip default-gateway`, even if entered as `ip route 0.0.0.0 0.0.0.0 …`.
 
 1. Commit the config to run at start, `copy running-config startup-config`.
     

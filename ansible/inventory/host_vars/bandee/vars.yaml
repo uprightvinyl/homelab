@@ -1,4 +1,6 @@
 # Desired switch configuration for bandee
+default_gateway: 10.0.10.2   # coo
+
 vlans:
   - 20
   - 30
