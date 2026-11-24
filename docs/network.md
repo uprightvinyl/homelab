@@ -13,11 +13,17 @@
 
 | Host | VLAN | Subnet | IP |
 |------|------|--------|----|
-| bandee (management) | 10 | `10.0.10.0/24` | `10.0.10.1` |
+| bandee (management) | 4 | `192.168.4.0/22` | `192.168.4.254` |
+| bandee (VLAN 10 gateway) | 10 | `10.0.10.0/24` | `10.0.10.1` |
+| coo (LAN) | 10 | `10.0.10.0/24` | `10.0.10.2` |
+| coo (WAN, Eero reservation) | 4 | `192.168.4.0/22` | `192.168.4.253` |
 | waddle | 10 | `10.0.10.0/24` | `10.0.10.10` |
 | dede (to be re-added) | 10 | `10.0.10.0/24` | `10.0.10.11` |
 | nova01 (ahv) — `NTNX-1db48058-A` | 10 | `10.0.10.0/24` | `10.0.10.20` |
 | nova01 (cvm) — `NTNX-1db48058-A-CVM` | 10 | `10.0.10.0/24` | `10.0.10.21` |
+| nova cluster VIP (Prism Element) | 10 | `10.0.10.0/24` | `10.0.10.30` |
+| nova iSCSI data services | 10 | `10.0.10.0/24` | `10.0.10.31` |
+| pc (Prism Central) | 10 | `10.0.10.0/24` | `10.0.10.32` |
 | meta | 20 | `10.0.20.0/24` | `10.0.20.10` |
 | rick | 4 | `192.168.4.0/22` | `192.168.4.20` |
 
@@ -35,9 +41,10 @@
 | gi26 | Eero uplink | 4 | Access |
 
 ## Routing
-Routing for the lab is managed by bandee. 
 
-Rick has a static route configured so that can communicate with the lab (10.0.0.0/16) whilst ist default gateway is the eero device. 
+bandee routes between the lab VLANs (10, 20, 30) and the home network (VLAN 4), and sends everything else to coo via its default gateway (`10.0.10.2`). coo routes the lab range (`10.0.0.0/16`) back via bandee (`10.0.10.1`), and sends internet traffic out its WAN to the Eero (`192.168.4.1`).
+
+rick has a static route to the lab (`10.0.0.0/16`) via bandee, as its default gateway is the Eero.
 
 ## DNS
 
@@ -57,18 +64,9 @@ Handled by pihole on waddle for entire network.
 
 ## Internet Access
 
-Internet access and outbound NAT for the lab are provided by coo, a Ubiquiti EdgeRouter. coo replaces the earlier plan to route internet access via an OPNsense VM, and the interim waddle wifi workaround. A dedicated hardware router at the edge is always on and independent of any hypervisor, so the lab's internet no longer depends on a compute node being up first. See docs/decisions.md for the reasoning.
+Internet access and outbound NAT for the lab are provided by coo, a Ubiquiti EdgeRouter, rather than the previously planned OPNsense VM or the waddle wifi workaround. Outbound traffic goes from bandee to coo, which masquerades it out to the Eero; the Virgin Hub is in modem mode, so the Eero's NAT is the only other layer. A dedicated hardware router at the edge is always on and independent of any hypervisor, so the lab's internet does not depend on a compute node being up first. coo owns only the edge role; bandee handles inter-VLAN routing. See docs/decisions.md for the reasoning.
 
-coo owns only the edge role (WAN and outbound NAT); bandee continues to handle inter-VLAN routing. While the lab is in transit, coo runs standalone — see Interim setup below.
-
-## Interim setup (lab in transit)
-
-While the rest of the lab is being shipped, coo is the only live network device, running standalone as the edge router for the new Nutanix host (Z4):
-
-- eth0 (WAN): DHCP client, plugged into the upstream Virgin router (double NAT; outbound only).
-- eth1 (LAN): 10.0.10.1/24, serving the management range with NAT, a DHCP pool (10.0.10.100–150) and a DNS forwarder (until waddle provides DNS).
-
-coo temporarily holds 10.0.10.1 — bandee's designated management and gateway address — because bandee is absent. The two are never live at the same time: when the lab returns, bandee reclaims 10.0.10.1 and coo is rebuilt as the edge NAT. This keeps the Nutanix host's gateway (10.0.10.1) constant across the move, so it needs no re-addressing — only its DNS entry moves from coo to waddle.
+Remote access is via the Cloudflare Tunnel and WARP, which route `10.0.10.0/24` to the lab. coo has no port forwards; a jump box is planned as a break-glass.
 
 ## Firewalling
 

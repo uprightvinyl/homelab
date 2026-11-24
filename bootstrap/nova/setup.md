@@ -31,8 +31,8 @@ Static addresses on the management range (10.0.10.0/24). The block is laid out t
 Common settings:
 
 - Netmask: 255.255.255.0 (/24)
-- Gateway: 10.0.10.1 (coo)
-- DNS: 10.0.10.1 (interim; becomes waddle 10.0.10.10 when the lab returns)
+- Gateway: 10.0.10.1 (bandee, which default-routes to coo for internet access)
+- DNS: 10.0.10.10 (waddle)
 - Cluster name: **nova** (set with `ncli cluster edit-params new-name=nova`).
 - Node identity: CE does not let you set a host name, so the AHV host keeps its auto-generated name (`NTNX-1db48058-A`), and the CVM is `NTNX-1db48058-A-CVM` by design (the ID is regenerated on each reinstall). Renaming the host afterward is a gated KB procedure, so it was left as-is. **nova01** is the lab's name for the node, carried in DNS/docs (`nova01.lab.uprightlab.com` → `10.0.10.20`), not on the host itself.
 
@@ -136,9 +136,9 @@ Step 2 — Size and Scale:
 Step 3 — Configuration:
 
 1. Network: **`vlan10-mgmt`** (the untagged VLAN 10 subnet).
-1. Subnet Mask `255.255.255.0`, Gateway `10.0.10.1` (coo).
-1. DNS `10.0.10.1` (coo — interim; becomes waddle `10.0.10.10` when the lab returns).
-1. NTP `pool.ntp.org` (interim; repoint to waddle once it is up).
+1. Subnet Mask `255.255.255.0`, Gateway `10.0.10.1` (bandee).
+1. DNS `10.0.10.10` (waddle).
+1. NTP `10.0.10.10` (waddle).
 1. Container: the cluster's default storage container (`default-container-…`).
 1. IP Address: **`10.0.10.32`**.
 1. Internal Network Configuration: left collapsed / at defaults — this relates to PC's internal (microservices) network; revisit when enabling CMSP for NKP/NAI.

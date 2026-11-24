@@ -87,9 +87,9 @@ This is a clean trade for shared, non-performance-critical content. bandee (an S
 
 ### Internal NTP source on waddle
 
-The lab has no outbound internet yet (pending OPNsense), so the hosts cannot reach public NTP pools directly. waddle is the exception — it has internet via its temporary wifi connection — so it acts as the lab's internal time source: it syncs accurate time from a public pool and serves it inward to the internet-less hosts.
+When this was set up, the lab had no outbound internet, so the hosts could not reach public NTP pools directly. waddle was the exception — it had internet via its temporary wifi connection — so it became the lab's internal time source: it syncs accurate time from a public pool and serves it inward to the other hosts. coo now provides the lab's internet, but waddle remains the single time source.
 
-This uses Pi-hole's built-in NTP server (Pi-hole v6 / FTL includes one), so no extra service is needed — waddle's single Pi-hole container already provides DNS, DHCP and NTP. The Proxmox nodes (chrony), meta (systemd-timesyncd) and bandee (SNTP) all point at waddle. This keeps time working before OPNsense exists, and remains good practice afterwards: a single authoritative internal source means every host agrees on time even if the internet drops, which matters for TLS certificates, cluster tokens and correlating logs.
+This uses Pi-hole's built-in NTP server (Pi-hole v6 / FTL includes one), so no extra service is needed — waddle's single Pi-hole container already provides DNS, DHCP and NTP. The Proxmox nodes (chrony), meta (systemd-timesyncd) and bandee (SNTP) all point at waddle. This kept time working before the lab had internet, and remains good practice now that it does: a single authoritative internal source means every host agrees on time even if the internet drops, which matters for TLS certificates, cluster tokens and correlating logs.
 
 ### dede's second disk as a local VM storage pool
 
@@ -105,11 +105,11 @@ Internet access and outbound NAT for the lab are provided by coo, a Ubiquiti Edg
 
 coo owns only the edge role: WAN, outbound NAT and, later, firewalling to the outside. bandee keeps inter-VLAN (east-west) routing, which it does in hardware at line rate; making the EdgeRouter the sole gateway would hairpin all inter-VLAN traffic through its single trunk link (router-on-a-stick). The end state is therefore a router at the edge (coo) and an L3 switch in the core (bandee), with bandee default-routing out to coo.
 
-The management and gateway address 10.0.10.1 is kept constant across the relocation. While the lab is in transit, coo holds 10.0.10.1 as the standalone gateway; when the lab returns, bandee reclaims 10.0.10.1 as its VLAN 10 SVI and coo is rebuilt as edge-only. The two are never live simultaneously, so there is no address conflict, and hosts built now (the Nutanix host) keep their gateway unchanged — only their DNS entry moves from coo to waddle.
+The gateway address 10.0.10.1 was kept constant across the relocation. While the lab was in transit, coo held 10.0.10.1 as the standalone gateway; when the lab returned, bandee reclaimed 10.0.10.1 as its VLAN 10 SVI and coo was rebuilt as edge-only on 10.0.10.2. The Nutanix host, built during the move, kept its gateway unchanged — only its DNS moved from coo to waddle.
 
 ### Home internet: Virgin in modem mode, Eero as the router
 
-When the lab and the Eero return, the upstream Virgin Hub 5 will be put into modem mode (a transparent bridge) with the Eero running as the primary router on 192.168.4.0/22. This keeps all of the Eero's functionality — bridging the Eero to an access point would lose it — while removing the Virgin's redundant NAT layer, so home devices are single-NATed and the lab (behind coo) is double-NATed rather than triple. coo's WAN then faces the Eero network. Because the lab NATs behind coo as a single 192.168.4.x host, the Eero never needs static routes to the 10.x lab subnets — which is what allows the original waddle wifi workaround to be retired.
+When the lab and the Eero returned, the upstream Virgin Hub 5 was put into modem mode (a transparent bridge) with the Eero running as the primary router on 192.168.4.0/22. This keeps all of the Eero's functionality — bridging the Eero to an access point would lose it — while removing the Virgin's redundant NAT layer, so home devices are single-NATed and the lab (behind coo) is double-NATed rather than triple. coo's WAN faces the Eero network. Because the lab NATs behind coo as a single 192.168.4.x host, the Eero never needs static routes to the 10.x lab subnets — which is what allows the original waddle wifi workaround to be retired.
 
 ### Nutanix CVM disks must be passthrough-friendly (NVMe gotcha)
 
