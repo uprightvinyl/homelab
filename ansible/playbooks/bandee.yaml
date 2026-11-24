@@ -99,9 +99,40 @@
           - configure terminal
           - sntp unicast client enable
           - sntp unicast client poll
-          - sntp server 10.0.10.10
+          - sntp server 10.0.10.10 poll
           - end
-      when: "'10.0.10.10' not in sntp_state.stdout[0]"
+      # the server being listed isn't enough: without poll, bandee never queries it
+      when: sntp_state.stdout[0] is not search('Server\s*:\s*10\.0\.10\.10\s+Polling\s*:\s*Enabled')
+      changed_when: true
+      notify: Save running config
+
+    - name: Remove default SNTP servers
+      community.ciscosmb.command:
+        commands:
+          - configure terminal
+          - "no sntp server {{ item }}"
+          - end
+      loop: "{{ unwanted_sntp_servers }}"
+      when: sntp_state.stdout[0] is search('Server\s*:\s*' ~ (item | regex_escape) ~ '\s')
+      changed_when: true
+      notify: Save running config
+
+    - name: Read clock config
+      community.ciscosmb.command:
+        commands: show clock detail
+      register: clock_state
+      changed_when: false
+
+    - name: Set UK time zone and summer time
+      community.ciscosmb.command:
+        commands:
+          - configure terminal
+          - clock timezone GMT 0
+          - clock summer-time BST recurring eu
+          - end
+      when: >-
+        clock_state.stdout[0] is not search('Acronym is GMT\s+Offset is UTC\+0')
+        or clock_state.stdout[0] is not search('Acronym is BST\s+Recurring every year')
       changed_when: true
       notify: Save running config
 

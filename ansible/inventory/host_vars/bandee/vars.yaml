@@ -1,6 +1,14 @@
 # Desired switch configuration for bandee
 default_gateway: 10.0.10.2   # coo
 
+# SG350 factory defaults, removed so waddle is the only time source
+unwanted_sntp_servers:
+  - pool.ntp.org
+  - time-pnp.cisco.com
+  - time-a.timefreq.bldrdoc.gov
+  - time-b.timefreq.bldrdoc.gov
+  - time-c.timefreq.bldrdoc.gov
+
 vlans:
   - 20
   - 30
