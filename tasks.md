@@ -2,6 +2,32 @@
 
 > Note: Lab Worked Paused due to relocation. Status prior to power down: OPNsense base interfaces done (VLAN-10 LAN untagged); cutover NOT done; OPNsense API/Ansible config pending; then AWS pivot.
 
+## Current to-do (November 2026)
+
+### Zigbee (next)
+- [ ] Deploy Mosquitto and Zigbee2MQTT on waddle, using the Sonoff Dongle Lite MG21
+- [ ] Pair the lab's S60ZBTPG plug and confirm its power readings
+- [ ] Deploy Home Assistant on waddle
+- [ ] Pair the heater's S60ZBTPG and the Bosch Room Thermostat II, and set up heater control with failsafes
+
+### Nutanix (in this order)
+- [ ] Review the Cloudflare routes and apps, and decide what to expose for Nutanix access
+- [ ] Restart the nova cluster
+- [ ] Set the name and NTP servers to 10.0.10.10 in Prism Element and Prism Central
+- [ ] Write nova01's shutdown and startup steps
+
+### waddle
+- [ ] Pin the Semaphore image before ansible-core 2.23
+- [ ] Decide whether to retire the wifi workaround
+
+### coo
+- [ ] Build the jump box and add its break-glass NAT rules
+- [ ] Tighten the power-off steps in docs/shutdown-startup.md
+
+### Clean-up
+- [ ] Remove or archive tofu/opnsense
+- [ ] Fix the remaining Australian settings (meta cloud-init, Proxmox answer files, waddle wifi country)
+
 ## Milestone 0 — Preparation
 
 This milestone prepares the MacBook so it is able to complete the rest of the lab build.

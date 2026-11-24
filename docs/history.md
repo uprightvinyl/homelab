@@ -2,6 +2,12 @@
 
 ## November 2026
 
+### Tuesday 24th
+
+- Moved Pi-hole on waddle to UK time, syncing from `uk.pool.ntp.org`, and refreshed its lab host records: kirby removed, rick corrected to 192.168.4.20, and coo, nova01, nova and pc added. waddle's NTP server was already running and reachable, so it was not the cause of the time problems elsewhere.
+- Fixed bandee's clock, which had been stuck in 2023. waddle was listed as a time server but without polling enabled, so bandee never queried it. The playbook now checks for polling, removes the SG350's default time servers so waddle is the only source, and sets GMT with BST summer time.
+- Started planning Zigbee home automation on waddle, using a Sonoff Dongle Lite MG21 with Mosquitto, Zigbee2MQTT and Home Assistant, to monitor the lab's power and control an electric heater. Ordered a second Sonoff S60ZBTPG plug and a Bosch Room Thermostat II.
+
 ### Wednesday 18th
 
 - Rebuilt coo as the lab's permanent edge NAT. Removed the interim bridge, DHCP pool, DNS forwarder and port forwards, moved eth1 to 10.0.10.2 on bandee gi25, and pointed bandee's default route at coo. The lab now has outbound internet without relying on waddle's wifi workaround. Remote access is via the Cloudflare Tunnel and WARP, with a jump box planned as a break-glass.
