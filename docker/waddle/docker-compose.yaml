@@ -63,5 +63,51 @@ services:
       - semaphore_data:/var/lib/semaphore
     depends_on:
       - pihole
+  mosquitto:
+    container_name: mosquitto
+    image: eclipse-mosquitto:2.0.23
+    restart: unless-stopped
+    environment:
+      MQTT_PASSWORD: ${MQTT_PASSWORD}
+    # Rebuild the hashed password file on every start, so it always matches the vault
+    command:
+      - sh
+      - -c
+      - >-
+        rm -f /mosquitto/data/passwd &&
+        mosquitto_passwd -b -c /mosquitto/data/passwd zigbee2mqtt "$$MQTT_PASSWORD" &&
+        chown mosquitto:mosquitto /mosquitto/data/passwd &&
+        chmod 0600 /mosquitto/data/passwd &&
+        exec mosquitto -c /mosquitto/config/mosquitto.conf
+    volumes:
+      - './mosquitto/mosquitto.conf:/mosquitto/config/mosquitto.conf:ro'
+      - mosquitto_data:/mosquitto/data
+  zigbee2mqtt:
+    container_name: zigbee2mqtt
+    image: ghcr.io/koenkk/zigbee2mqtt:2.14.3
+    restart: unless-stopped
+    ports:
+      - "8080:8080"
+    environment:
+      TZ: Europe/London
+      Z2M_ONBOARD_NO_SERVER: '1'   # skip the first-run setup page
+      ZIGBEE2MQTT_CONFIG_MQTT_SERVER: 'mqtt://mosquitto:1883'
+      ZIGBEE2MQTT_CONFIG_MQTT_USER: zigbee2mqtt
+      ZIGBEE2MQTT_CONFIG_MQTT_PASSWORD: ${MQTT_PASSWORD}
+      ZIGBEE2MQTT_CONFIG_SERIAL_PORT: /dev/ttyUSB0
+      ZIGBEE2MQTT_CONFIG_SERIAL_ADAPTER: ember
+      ZIGBEE2MQTT_CONFIG_SERIAL_BAUDRATE: '115200'
+      ZIGBEE2MQTT_CONFIG_SERIAL_RTSCTS: 'false'
+      ZIGBEE2MQTT_CONFIG_ADVANCED_CHANNEL: '25'   # changing this later can mean re-pairing
+      ZIGBEE2MQTT_CONFIG_FRONTEND_ENABLED: 'true'
+      ZIGBEE2MQTT_CONFIG_FRONTEND_AUTH_TOKEN: ${ZIGBEE2MQTT_AUTH_TOKEN}
+    devices:
+      - '/dev/serial/by-id/usb-SONOFF_SONOFF_Dongle_Lite_MG21_727374ec57a2ef11a79f976661ce3355-if00-port0:/dev/ttyUSB0'
+    volumes:
+      - './zigbee2mqtt:/app/data'   # holds the network key, so back it up
+      - '/run/udev:/run/udev:ro'
+    depends_on:
+      - mosquitto
 volumes:
   semaphore_data:
+  mosquitto_data:

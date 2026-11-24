@@ -91,6 +91,22 @@
         group: chris
         mode: '0644'
 
+    - name: Create Mosquitto config directory
+      file:
+        path: /home/chris/docker/waddle/mosquitto
+        state: directory
+        mode: '0755'
+        owner: chris
+        group: chris
+
+    - name: Copy Mosquitto config to waddle #restart the mosquitto container by hand if this changes
+      copy:
+        src: "{{ playbook_dir }}/../../docker/waddle/mosquitto/mosquitto.conf"
+        dest: /home/chris/docker/waddle/mosquitto/mosquitto.conf
+        owner: chris
+        group: chris
+        mode: '0644'
+
     - name: Generate .env file from vault secrets
       template:
         src: "{{ playbook_dir }}/../templates/waddle.env.j2"
