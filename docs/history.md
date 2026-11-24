@@ -7,6 +7,7 @@
 - Moved Pi-hole on waddle to UK time, syncing from `uk.pool.ntp.org`, and refreshed its lab host records: kirby removed, rick corrected to 192.168.4.20, and coo, nova01, nova and pc added. waddle's NTP server was already running and reachable, so it was not the cause of the time problems elsewhere.
 - Fixed bandee's clock, which had been stuck in 2023. waddle was listed as a time server but without polling enabled, so bandee never queried it. The playbook now checks for polling, removes the SG350's default time servers so waddle is the only source, and sets GMT with BST summer time.
 - Started planning Zigbee home automation on waddle, using a Sonoff Dongle Lite MG21 with Mosquitto, Zigbee2MQTT and Home Assistant, to monitor the lab's power and control an electric heater. Ordered a second Sonoff S60ZBTPG plug and a Bosch Room Thermostat II.
+- Deployed Mosquitto and Zigbee2MQTT on waddle via Semaphore. The dongle connected first time and formed a new Zigbee network on channel 25, with no devices joined yet. Once it arrives, the new plug will be paired first and swapped in for the lab's existing one with everything powered down, rather than pairing the existing plug while it feeds the lab.
 
 ### Wednesday 18th
 

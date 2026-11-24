@@ -4,11 +4,14 @@
 
 ## Current to-do (November 2026)
 
-### Zigbee (next)
-- [ ] Deploy Mosquitto and Zigbee2MQTT on waddle, using the Sonoff Dongle Lite MG21
-- [ ] Pair the lab's S60ZBTPG plug and confirm its power readings
-- [ ] Deploy Home Assistant on waddle
-- [ ] Pair the heater's S60ZBTPG and the Bosch Room Thermostat II, and set up heater control with failsafes
+### Zigbee (waiting for the new plug and thermostat)
+- [x] Deploy Mosquitto and Zigbee2MQTT on waddle, using the Sonoff Dongle Lite MG21
+- [ ] Pair the new S60ZBTPG with nothing plugged into it, set it up for the lab (power-on behaviour on, no low overload limits) and confirm its power readings
+- [ ] Power the lab down and swap the new plug in for the existing one
+- [ ] Pair the old plug for the heater (power-on behaviour off) and test the inching failsafe
+- [ ] Pair the Bosch Room Thermostat II
+- [ ] Deploy Home Assistant on waddle, once the devices are online
+- [ ] Set up heater control with failsafes
 
 ### Nutanix (in this order)
 - [ ] Review the Cloudflare routes and apps, and decide what to expose for Nutanix access
@@ -17,6 +20,8 @@
 - [ ] Write nova01's shutdown and startup steps
 
 ### waddle
+- [ ] Set up a backup of waddle's SD card (including the Zigbee2MQTT data folder, which holds the network key)
+- [ ] Tighten the permissions on Zigbee2MQTT's configuration.yaml, which any user on waddle can read
 - [ ] Pin the Semaphore image before ansible-core 2.23
 - [ ] Decide whether to retire the wifi workaround
 
