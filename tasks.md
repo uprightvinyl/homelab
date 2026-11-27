@@ -4,11 +4,12 @@
 
 ## Current to-do (November 2026)
 
-### Zigbee (waiting for the new plug and thermostat)
+### Zigbee (waiting for the thermostat)
 - [x] Deploy Mosquitto and Zigbee2MQTT on waddle, using the Sonoff Dongle Lite MG21
-- [ ] Pair the new S60ZBTPG with nothing plugged into it, set it up for the lab (power-on behaviour on, no low overload limits) and confirm its power readings
-- [ ] Power the lab down and swap the new plug in for the existing one
-- [ ] Pair the old plug for the heater (power-on behaviour off) and test the inching failsafe
+- [x] Pair the lab plug with the lab moved to another socket (power-on behaviour on, no low overload limits), and confirm its power readings
+- [x] Pair the heater plug (power-on behaviour off)
+- [ ] Set and test the heater plug's inching failsafe
+- [ ] Update the lab plug's firmware, with the lab moved to another socket
 - [ ] Pair the Bosch Room Thermostat II
 - [ ] Deploy Home Assistant on waddle, once the devices are online
 - [ ] Set up heater control with failsafes
@@ -17,7 +18,7 @@
 - [ ] Review the Cloudflare routes and apps, and decide what to expose for Nutanix access
 - [ ] Restart the nova cluster
 - [ ] Set the name and NTP servers to 10.0.10.10 in Prism Element and Prism Central
-- [ ] Write nova01's shutdown and startup steps
+- [x] Write nova01's shutdown and startup steps
 
 ### waddle
 - [ ] Set up a backup of waddle's SD card (including the Zigbee2MQTT data folder, which holds the network key)

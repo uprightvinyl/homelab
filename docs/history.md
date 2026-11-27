@@ -2,6 +2,12 @@
 
 ## November 2026
 
+### Friday 27th
+
+- Powered the lab down fully to pair the lab's smart plug safely. nova01 was shut down from its CVM, scheduling the AHV host's shutdown first and then shutting the CVM down. The lab's multi-way was moved to another socket while the plug was paired with nothing plugged into it, then moved back. bandee, coo and waddle came back by themselves when power returned; nova01 and rick stayed off until powered on.
+- Paired the lab plug (`lab-plug`) and the garden office heater plug with Zigbee2MQTT. The lab plug comes back on after a power cut and has no low overload limits; the heater plug stays off after a power cut. The lab draws about 26 W with just bandee, coo and waddle, and about 126 W with nova01 (cluster stopped) and rick added.
+- Documented nova01's shutdown and startup, and how to move the lab's power supply.
+
 ### Tuesday 24th
 
 - Moved Pi-hole on waddle to UK time, syncing from `uk.pool.ntp.org`, and refreshed its lab host records: kirby removed, rick corrected to 192.168.4.20, and coo, nova01, nova and pc added. waddle's NTP server was already running and reachable, so it was not the cause of the time problems elsewhere.
