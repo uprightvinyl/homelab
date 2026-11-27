@@ -16,8 +16,9 @@
 
 ### Nutanix (in this order)
 - [ ] Review the Cloudflare routes and apps, and decide what to expose for Nutanix access
-- [ ] Restart the nova cluster
-- [ ] Set the name and NTP servers to 10.0.10.10 in Prism Element and Prism Central
+- [x] Restart the nova cluster
+- [x] Set the name and NTP servers to 10.0.10.10 in Prism Element and Prism Central (done in the GUI)
+- [ ] Manage the cluster's and Prism Central's name and NTP servers as code (confirm the CLI, Ansible or Terraform options), replacing the GUI changes
 - [x] Write nova01's shutdown and startup steps
 
 ### waddle

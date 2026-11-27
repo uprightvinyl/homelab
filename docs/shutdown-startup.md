@@ -35,7 +35,13 @@ The Eero and its `192.168.4.0/22` network move with the lab. The lab only ever p
 3. **waddle** — power on. Confirm it has internet; provides DNS, DHCP, NTP, Semaphore.
 4. **Proxmox nodes** (dede, when re-added) — power on; they mount `rick-nfs`.
 5. **meta** — power on.
-6. **nova01** — power on; the CVM starts on its own. After a few minutes, SSH to the CVM (`ssh nutanix@10.0.10.21`) and run `cluster start`, check it with `cluster status`, then start Prism Central's VM from Prism Element.
+6. **nova01** — power on; the CVM starts on its own. After a few minutes, SSH to the CVM (`ssh nutanix@10.0.10.21`) and run `cluster start`. Once `cluster status` shows all services as `UP`, start Prism Central's VM. Its name was set to `pc` at deployment; confirm with `acli vm.list` if unsure:
+
+   ```
+   acli vm.on pc
+   ```
+
+   Or in one step from the workstation (with WARP connected): `ssh nutanix@10.0.10.21 'source /etc/profile; acli vm.on pc'`. Prism Central takes 10–20 minutes to come up at `https://10.0.10.32:9440`. If it doesn't, SSH to it (`ssh nutanix@10.0.10.32`), check `cluster status`, and run `cluster start` if its services are down.
 
 ## Moving the lab's power supply
 

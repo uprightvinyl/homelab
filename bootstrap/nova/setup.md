@@ -32,7 +32,7 @@ Common settings:
 
 - Netmask: 255.255.255.0 (/24)
 - Gateway: 10.0.10.1 (bandee, which default-routes to coo for internet access)
-- DNS: 10.0.10.10 (waddle)
+- DNS and NTP: 10.0.10.10 (waddle) only — see the note under Create / confirm the cluster.
 - Cluster name: **nova** (set with `ncli cluster edit-params new-name=nova`).
 - Node identity: CE does not let you set a host name, so the AHV host keeps its auto-generated name (`NTNX-1db48058-A`), and the CVM is `NTNX-1db48058-A-CVM` by design (the ID is regenerated on each reinstall). Renaming the host afterward is a gated KB procedure, so it was left as-is. **nova01** is the lab's name for the node, carried in DNS/docs (`nova01.lab.uprightlab.com` → `10.0.10.20`), not on the host itself.
 
@@ -69,9 +69,12 @@ These steps follow Nutanix's CE Getting Started → Cluster Configuration (see R
 1. Login at the console or SSH to the AHV host as root (default password `nutanix/4u`), then hop to the local CVM over the internal link: `ssh nutanix@192.168.5.2` (default password `nutanix/4u`). Once the cluster is up, the CVM is also reachable via ssh using the external IP (10.0.10.21)
 1. Create a single-node cluster: `cluster -s 10.0.10.21 --redundancy_factor=1 create`. Wait until all services report **UP**.
 1. Name the cluster **nova**: `ncli cluster edit-params new-name=nova` (or set it in Prism after first login).
-1. Set coo as a local DNS server: `ncli cluster add-to-name-servers servers=10.0.10.1`
+1. Set waddle as the DNS server: `ncli cluster add-to-name-servers servers=10.0.10.10`.
 1. Set the cluster virtual (Prism) IP to **10.0.10.30**: `ncli cluster set-external-ip-address external-ip-address=10.0.10.30`.
-1. Leave ntp servers, it is already set to use ntp.pool.org.
+1. Set waddle as the NTP server: `ncli cluster add-to-ntp-servers servers=10.0.10.10`.
+1. Remove any other name and NTP servers, such as the installer's public defaults. List them with `ncli cluster get-name-servers` and `ncli cluster get-ntp-servers`, then remove each with `ncli cluster remove-from-name-servers servers=<address>` or `ncli cluster remove-from-ntp-servers servers=<address>`. Both can also be changed in Prism Element under Settings > Name Servers and Settings > NTP Servers.
+
+    Note: waddle is the only DNS and NTP source, for consistency with the rest of the lab. Only Pi-hole knows the lab's host names, so a public DNS server alongside it would make lab lookups fail intermittently; Pi-hole forwards internet names upstream, so nothing is lost. For time, every lab host follows waddle (see docs/decisions.md), and the cluster's NTP setting also sets the AHV host's time. Nutanix health checks may warn about having a single NTP server; that is a known, accepted trade-off.
 
 ## Access Prism Element
 
@@ -139,6 +142,7 @@ Step 3 — Configuration:
 1. Subnet Mask `255.255.255.0`, Gateway `10.0.10.1` (bandee).
 1. DNS `10.0.10.10` (waddle).
 1. NTP `10.0.10.10` (waddle).
+1. After deployment, remove any other name or NTP servers in Prism Central's settings, as for Prism Element.
 1. Container: the cluster's default storage container (`default-container-…`).
 1. IP Address: **`10.0.10.32`**.
 1. Internal Network Configuration: left collapsed / at defaults — this relates to PC's internal (microservices) network; revisit when enabling CMSP for NKP/NAI.
@@ -155,7 +159,6 @@ Reference — Extra Small PC limitations: https://portal.nutanix.com/page/docume
 
 - NKP (Nutanix Kubernetes Platform).
 - NAI (Nutanix AI).
-- Joining the wider lab when it returns (re-point DNS to waddle; integrate with bandee/coo routing).
 
 ## References
 

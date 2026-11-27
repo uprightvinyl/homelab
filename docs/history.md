@@ -7,6 +7,7 @@
 - Powered the lab down fully to pair the lab's smart plug safely. nova01 was shut down from its CVM, scheduling the AHV host's shutdown first and then shutting the CVM down. The lab's multi-way was moved to another socket while the plug was paired with nothing plugged into it, then moved back. bandee, coo and waddle came back by themselves when power returned; nova01 and rick stayed off until powered on.
 - Paired the lab plug (`lab-plug`) and the garden office heater plug with Zigbee2MQTT. The lab plug comes back on after a power cut and has no low overload limits; the heater plug stays off after a power cut. The lab draws about 26 W with just bandee, coo and waddle, and about 126 W with nova01 (cluster stopped) and rick added.
 - Documented nova01's shutdown and startup, and how to move the lab's power supply.
+- Restarted the nova cluster and Prism Central, and added the Prism Central start to the startup steps. Set waddle as the only DNS and NTP server in both Prism Element and Prism Central, removing coo's old address and the external defaults. This was done in the GUI, so moving it to code (CLI, Ansible or Terraform) is now on the to-do list.
 
 ### Tuesday 24th
 
